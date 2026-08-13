@@ -73,7 +73,24 @@
   .logo .sprout{width:14px;height:14px;margin-left:1px;margin-top:-9px}
 
   /* ---------- Layout ---------- */
-  .app{display:grid;grid-template-columns:236px 1fr;min-height:100vh}
+  .app{display:grid;grid-template-columns:236px 1fr;min-height:100vh;transition:grid-template-columns .18s ease}
+  .logo-mini{display:none;width:34px;height:34px;border-radius:9px;background:var(--green);color:#fff;font-weight:800;font-size:18px;place-items:center;letter-spacing:-.03em}
+  /* collapsed sidebar → icon rail */
+  .app.nav-collapsed{grid-template-columns:66px 1fr}
+  .app.nav-collapsed .logo,
+  .app.nav-collapsed .co-btn .nm,
+  .app.nav-collapsed .co-btn .sub,
+  .app.nav-collapsed .co-btn .chev,
+  .app.nav-collapsed .nav-item span,
+  .app.nav-collapsed .nav-item .badge,
+  .app.nav-collapsed .nav-group,
+  .app.nav-collapsed .foot span:last-child{display:none}
+  .app.nav-collapsed .logo-mini{display:grid}
+  .app.nav-collapsed .brand{justify-content:center;padding:20px 0 14px}
+  .app.nav-collapsed .co-switch{padding:0 9px 12px}
+  .app.nav-collapsed .co-btn{justify-content:center;padding:8px}
+  .app.nav-collapsed .nav-item{justify-content:center;padding:10px 0}
+  .app.nav-collapsed .foot{justify-content:center}
   .side{background:var(--sidebar);border-right:1px solid var(--line);display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
   .side .brand{padding:20px 20px 14px;display:flex;align-items:center;justify-content:space-between}
   .co-switch{padding:0 14px 12px}
@@ -245,6 +262,7 @@
   <aside class="side">
     <div class="brand">
       <span class="logo"><span class="no">no</span><span class="buc">buc</span><svg class="sprout" viewBox="0 0 24 24" fill="var(--green)"><path d="M12 22c0-6 3-10 9-11-1 6-4 9-9 11z"/><path d="M12 22c0-5-2-8-7-9 1 5 3 7 7 9z" opacity=".85"/></svg></span>
+      <span class="logo-mini">n</span>
     </div>
     <div class="co-switch">
       <button class="co-btn" onclick="toast('Company switcher — demo')">
@@ -285,6 +303,7 @@
   <!-- ===== Main ===== -->
   <div class="main">
     <div class="top">
+      <button class="icon-btn" id="collapseBtn" title="Collapse menu" onclick="toggleSidebar()">${ic('menu')}</button>
       <button class="icon-btn" id="homeBtn" title="Back to Home" onclick="show('hub')" style="display:none">${ic('home')}</button>
       <div class="crumb"><span class="home-link" onclick="show('hub')" style="display:none">Home</span><span class="crumb-sep" style="display:none"> / </span><b id="crumb">Home</b></div>
       <div class="search">${ic('search')}<input placeholder="Search invoices, contacts, accounts…" onkeydown="if(event.key==='Enter')toast('Search — demo')"></div>
@@ -802,7 +821,8 @@
       box:'<path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8"/>',
       factory:'<path d="M3 21V9l6 4V9l6 4V5l6 4v12zM3 21h18"/>',
       store:'<path d="M4 9l1.2-5h13.6L20 9M5 9v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9M4 9h16"/>',
-      spark:'<path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/>'
+      spark:'<path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/>',
+      menu:'<path d="M4 6h16M4 12h16M4 18h16"/>'
     };
     return '<svg viewBox="0 0 24 24">'+(p[n]||'')+'</svg>';
   }
@@ -853,6 +873,7 @@
     document.querySelectorAll('[data-nav]').forEach(n=>{
       n.setAttribute('tabindex','0');
       n.setAttribute('role','button');
+      const lbl=n.querySelector('span'); if(lbl)n.title=lbl.textContent;
       n.addEventListener('click',()=>show(n.dataset.nav));
       n.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();show(n.dataset.nav);}});
     });
@@ -870,6 +891,12 @@
     r.setAttribute('data-theme',dark?'light':'dark');
     document.getElementById('themeBtn').innerHTML=ic(dark?'moon':'sun');
     toast(dark?'Light mode':'Dark mode');
+  }
+
+  /* ---------- collapsible sidebar ---------- */
+  function toggleSidebar(){
+    const c=document.querySelector('.app').classList.toggle('nav-collapsed');
+    document.getElementById('collapseBtn').title=c?'Expand menu':'Collapse menu';
   }
 
   /* ---------- toast ---------- */
