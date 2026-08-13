@@ -1,0 +1,667 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nobuc — PH Accounting ERP (prospect demo)</title>
+<style>
+  /* ---------- Nobuc design tokens ---------- */
+  :root{
+    --green:#22b24b; --green-deep:#1c9640; --green-soft:#e7f6ec; --green-tint:#f4f9f5;
+    --ink:#141414; --body:#20272e; --muted:#6b7280; --faint:#98a1ac;
+    --ground:#f4f7f5; --surface:#ffffff; --surface-2:#fafcfb;
+    --line:#e7ede8; --line-2:#eef2ef;
+    --sidebar:#ffffff; --sidebar-ink:#3c4550;
+    --pos:#1c9640; --neg:#d64545; --warn:#c67510; --info:#2f6fed;
+    --pos-bg:#e7f6ec; --neg-bg:#fbeaea; --warn-bg:#fdf1e0; --info-bg:#e8f0fe;
+    --series2:#7e8a97;
+    --shadow:0 1px 2px rgba(20,30,25,.04),0 8px 24px rgba(20,30,25,.05);
+    --shadow-sm:0 1px 2px rgba(20,30,25,.06);
+    --r:14px; --r-sm:9px;
+  }
+  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
+    --green:#3ecb63; --green-deep:#2fae4f; --green-soft:#15291b; --green-tint:#121815;
+    --ink:#eef2ee; --body:#d5dbd6; --muted:#9aa4a0; --faint:#6d7772;
+    --ground:#0d120f; --surface:#151b17; --surface-2:#191f1b;
+    --line:#242c26; --line-2:#202822;
+    --sidebar:#111713; --sidebar-ink:#b6bfb9;
+    --pos:#3ecb63; --neg:#f0736f; --warn:#e6a44e; --info:#6f9bf5;
+    --pos-bg:#15291b; --neg-bg:#2a1618; --warn-bg:#291d0f; --info-bg:#111d2e;
+    --series2:#6d7d8c;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+    --shadow-sm:0 1px 2px rgba(0,0,0,.3);
+  }}
+  :root[data-theme="dark"]{
+    --green:#3ecb63; --green-deep:#2fae4f; --green-soft:#15291b; --green-tint:#121815;
+    --ink:#eef2ee; --body:#d5dbd6; --muted:#9aa4a0; --faint:#6d7772;
+    --ground:#0d120f; --surface:#151b17; --surface-2:#191f1b;
+    --line:#242c26; --line-2:#202822;
+    --sidebar:#111713; --sidebar-ink:#b6bfb9;
+    --pos:#3ecb63; --neg:#f0736f; --warn:#e6a44e; --info:#6f9bf5;
+    --pos-bg:#15291b; --neg-bg:#2a1618; --warn-bg:#291d0f; --info-bg:#111d2e;
+    --series2:#6d7d8c;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+    --shadow-sm:0 1px 2px rgba(0,0,0,.3);
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    background:var(--ground); color:var(--body);
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:14px; line-height:1.5; -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none}
+  h1,h2,h3,h4{margin:0;color:var(--ink);letter-spacing:-.01em}
+  .num{font-variant-numeric:tabular-nums}
+
+  /* ---------- Logo ---------- */
+  .logo{font-weight:800;font-size:24px;letter-spacing:-.03em;line-height:1;display:inline-flex;align-items:center}
+  .logo .no{color:var(--ink)} .logo .buc{color:var(--green)}
+  .logo .sprout{width:14px;height:14px;margin-left:1px;margin-top:-9px}
+
+  /* ---------- Layout ---------- */
+  .app{display:grid;grid-template-columns:236px 1fr;min-height:100vh}
+  .side{background:var(--sidebar);border-right:1px solid var(--line);display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+  .side .brand{padding:20px 20px 14px;display:flex;align-items:center;justify-content:space-between}
+  .co-switch{padding:0 14px 12px}
+  .co-btn{width:100%;display:flex;align-items:center;gap:10px;padding:9px 10px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);cursor:pointer;text-align:left}
+  .co-badge{width:26px;height:26px;border-radius:7px;background:var(--green);color:#fff;font-weight:700;display:grid;place-items:center;font-size:12px;flex:none}
+  .co-btn .nm{font-weight:600;color:var(--ink);font-size:13px;line-height:1.2}
+  .co-btn .sub{color:var(--faint);font-size:11px}
+  .co-btn .chev{margin-left:auto;color:var(--faint)}
+  nav{padding:6px 10px;overflow-y:auto;flex:1}
+  .nav-group{margin:10px 6px 4px;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  .nav-item{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:var(--r-sm);color:var(--sidebar-ink);cursor:pointer;font-weight:500;margin-bottom:1px}
+  .nav-item svg{width:17px;height:17px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8}
+  .nav-item:hover{background:var(--green-tint);color:var(--ink)}
+  .nav-item.active{background:var(--green-soft);color:var(--green-deep);font-weight:600}
+  .nav-item .badge{margin-left:auto;background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px}
+  .side .foot{padding:12px;border-top:1px solid var(--line);display:flex;align-items:center;gap:10px}
+  .avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--green-deep));color:#fff;display:grid;place-items:center;font-weight:700;font-size:12px}
+
+  /* ---------- Topbar ---------- */
+  .main{display:flex;flex-direction:column;min-width:0}
+  .top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--ground) 85%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:12px 26px}
+  .crumb{color:var(--faint);font-size:13px}
+  .crumb b{color:var(--ink);font-weight:600}
+  .search{margin-left:8px;flex:1;max-width:340px;display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:7px 13px;color:var(--faint)}
+  .search svg{width:16px;height:16px;flex:none;stroke:currentColor;fill:none;stroke-width:1.9}
+  .search input{border:0;background:transparent;outline:none;color:var(--body);width:100%;font:inherit}
+  .top .spacer{flex:1}
+  .icon-btn{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;cursor:pointer;color:var(--muted)}
+  .icon-btn:hover{color:var(--ink);border-color:var(--green)}
+  .icon-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8}
+
+  /* ---------- Content ---------- */
+  .content{padding:24px 26px 60px;max-width:1180px;width:100%}
+  .page{display:none;animation:fade .25s ease}
+  .page.show{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+  .page-head h1{font-size:22px;font-weight:700}
+  .page-head .sub{color:var(--muted);font-size:13px;margin-top:3px}
+
+  .btn{font:inherit;font-weight:600;font-size:13px;border-radius:9px;padding:9px 15px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:inline-flex;align-items:center;gap:7px}
+  .btn:hover{border-color:var(--green)}
+  .btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2}
+  .btn.primary{background:var(--green);border-color:var(--green);color:#fff}
+  .btn.primary:hover{background:var(--green-deep);border-color:var(--green-deep)}
+  .btn.ghost{background:transparent}
+
+  /* cards + grid */
+  .grid{display:grid;gap:16px}
+  .cols-4{grid-template-columns:repeat(4,1fr)}
+  .cols-3{grid-template-columns:repeat(3,1fr)}
+  .cols-2{grid-template-columns:repeat(2,1fr)}
+  @media(max-width:1000px){.cols-4{grid-template-columns:repeat(2,1fr)}.cols-3,.cols-2{grid-template-columns:1fr}}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm)}
+  .card.pad{padding:18px}
+  .card-h{padding:15px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+  .card-h h3{font-size:14px;font-weight:700}
+  .card-h .link{color:var(--green-deep);font-weight:600;font-size:12.5px;cursor:pointer}
+
+  /* KPI */
+  .kpi .lbl{color:var(--muted);font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:7px}
+  .kpi .val{font-size:26px;font-weight:800;color:var(--ink);margin:8px 0 4px;letter-spacing:-.02em}
+  .kpi .delta{font-size:12px;font-weight:600;display:inline-flex;gap:4px;align-items:center}
+  .kpi .ic{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;background:var(--green-soft);color:var(--green-deep)}
+  .kpi .ic svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.9}
+  .up{color:var(--pos)} .down{color:var(--neg)}
+
+  /* table */
+  table{width:100%;border-collapse:collapse}
+  th{text-align:left;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:700;padding:11px 18px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+  td{padding:12px 18px;border-bottom:1px solid var(--line-2);font-size:13.5px}
+  tr:last-child td{border-bottom:0}
+  tbody tr{cursor:pointer}
+  tbody tr:hover{background:var(--green-tint)}
+  .r{text-align:right} .c{text-align:center}
+  .mono{font-variant-numeric:tabular-nums}
+  .pill{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:20px;white-space:nowrap}
+  .pill.paid{background:var(--pos-bg);color:var(--pos)} .pill.due{background:var(--warn-bg);color:var(--warn)}
+  .pill.over{background:var(--neg-bg);color:var(--neg)} .pill.draft{background:var(--info-bg);color:var(--info)}
+  .pill.rec{background:var(--pos-bg);color:var(--pos)} .pill.unrec{background:var(--warn-bg);color:var(--warn)}
+  .dot{width:7px;height:7px;border-radius:50%;background:currentColor}
+  .muted{color:var(--muted)} .strong{font-weight:700;color:var(--ink)}
+  .tny{font-size:11.5px;color:var(--faint)}
+
+  /* bars / chart */
+  .bars{display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:10px}
+  .bar{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:7px;height:100%}
+  .bar .fill{width:64%;background:linear-gradient(180deg,var(--green),var(--green-deep));border-radius:6px 6px 3px 3px;min-height:4px;transition:height .5s}
+  .bar .fill.soft{background:var(--series2)}
+  .bar .cap{font-size:10.5px;color:var(--faint);font-weight:600}
+  .legend{display:flex;gap:16px;font-size:12px;color:var(--muted)}
+  .legend i{width:9px;height:9px;border-radius:3px;display:inline-block;margin-right:5px;vertical-align:middle}
+
+  .row-split{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+  .row-split:last-child{border-bottom:0}
+  .prog{height:7px;border-radius:5px;background:var(--line);overflow:hidden}
+  .prog>i{display:block;height:100%;background:var(--green);border-radius:5px}
+
+  /* tabs */
+  .tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:18px}
+  .tab{padding:9px 14px;font-weight:600;font-size:13.5px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+  .tab:hover{color:var(--ink)}
+  .tab.active{color:var(--green-deep);border-bottom-color:var(--green)}
+  .subpage{display:none}.subpage.show{display:block}
+
+  /* receipt */
+  .doc{max-width:640px;margin:0 auto;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+  .doc-top{padding:22px 26px;border-bottom:2px solid var(--green);display:flex;justify-content:space-between;align-items:flex-start}
+  .doc-top .co{font-weight:800;color:var(--ink);font-size:16px}
+  .doc-body{padding:22px 26px}
+  .kv{display:flex;justify-content:space-between;padding:5px 0;font-size:13px}
+  .doc table{margin-top:8px;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .doc th{background:var(--surface-2)}
+
+  .banner{display:flex;gap:12px;align-items:center;background:var(--green-soft);border:1px solid color-mix(in srgb,var(--green) 30%,transparent);color:var(--green-deep);padding:12px 16px;border-radius:var(--r);font-size:13.5px;margin-bottom:18px}
+  .banner svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;flex:none}
+  .banner b{color:var(--green-deep)}
+
+  /* toast */
+  #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--surface);padding:11px 18px;border-radius:10px;font-weight:600;font-size:13px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.25s;z-index:80}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  :root[data-theme="dark"] #toast,:root:not([data-theme="light"]) #toast{background:var(--green);color:#04140a}
+
+  /* modal */
+  .modal-bg{position:fixed;inset:0;background:rgba(10,20,14,.5);display:none;align-items:flex-start;justify-content:center;padding:40px 16px;z-index:70;overflow-y:auto}
+  .modal-bg.show{display:flex}
+  .badge-soft{display:inline-flex;align-items:center;gap:6px;background:var(--green-soft);color:var(--green-deep);font-weight:700;font-size:11px;padding:3px 9px;border-radius:20px}
+  .nav-item:focus-visible,.tab:focus-visible,.co-btn:focus-visible,.btn:focus-visible,.icon-btn:focus-visible,tbody tr:focus-visible,.card-h .link:focus-visible{outline:2px solid var(--green);outline-offset:2px;border-radius:6px}
+  @media(max-width:860px){.app{grid-template-columns:1fr}.side{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- ===== Sidebar ===== -->
+  <aside class="side">
+    <div class="brand">
+      <span class="logo"><span class="no">no</span><span class="buc">buc</span><svg class="sprout" viewBox="0 0 24 24" fill="var(--green)"><path d="M12 22c0-6 3-10 9-11-1 6-4 9-9 11z"/><path d="M12 22c0-5-2-8-7-9 1 5 3 7 7 9z" opacity=".85"/></svg></span>
+    </div>
+    <div class="co-switch">
+      <button class="co-btn" onclick="toast('Company switcher — demo')">
+        <span class="co-badge">ST</span>
+        <span><span class="nm">Sunrise Trading Corp.</span><br><span class="sub">VAT-reg · FY 2026</span></span>
+        <span class="chev">⌄</span>
+      </button>
+    </div>
+    <nav id="nav">
+      <div class="nav-group">Overview</div>
+      <div class="nav-item active" data-nav="dashboard">${ic('grid')}<span>Dashboard</span></div>
+
+      <div class="nav-group">Transactions</div>
+      <div class="nav-item" data-nav="sales">${ic('doc')}<span>Sales &amp; AR</span><span class="badge">6</span></div>
+      <div class="nav-item" data-nav="purchases">${ic('cart')}<span>Purchases &amp; AP</span></div>
+      <div class="nav-item" data-nav="banking">${ic('bank')}<span>Banking</span><span class="badge">4</span></div>
+
+      <div class="nav-group">Accounting</div>
+      <div class="nav-item" data-nav="accounting">${ic('book')}<span>Chart &amp; Journals</span></div>
+      <div class="nav-item" data-nav="bir">${ic('shield')}<span>BIR &amp; Tax</span></div>
+      <div class="nav-item" data-nav="reports">${ic('chart')}<span>Reports</span></div>
+
+      <div class="nav-group">People</div>
+      <div class="nav-item" data-nav="payroll">${ic('users')}<span>Payroll</span></div>
+    </nav>
+    <div class="foot">
+      <span class="avatar">AR</span>
+      <span style="line-height:1.2"><span style="font-weight:600;color:var(--ink);font-size:13px">Alfred R.</span><br><span class="tny">Owner / Admin</span></span>
+    </div>
+  </aside>
+
+  <!-- ===== Main ===== -->
+  <div class="main">
+    <div class="top">
+      <div class="crumb"><b id="crumb">Dashboard</b></div>
+      <div class="search">${ic('search')}<input placeholder="Search invoices, contacts, accounts…" onkeydown="if(event.key==='Enter')toast('Search — demo')"></div>
+      <div class="spacer"></div>
+      <button class="icon-btn" title="New" onclick="toast('Quick add — demo')">${ic('plus')}</button>
+      <button class="icon-btn" title="Notifications" onclick="toast('3 items need your attention')">${ic('bell')}</button>
+      <button class="icon-btn" id="themeBtn" title="Toggle theme" onclick="toggleTheme()">${ic('moon')}</button>
+    </div>
+
+    <div class="content">
+      <!-- ========== DASHBOARD ========== -->
+      <section class="page show" id="dashboard">
+        <div class="page-head">
+          <div><h1>Good morning, Alfred 👋</h1><div class="sub">Here's how Sunrise Trading is doing — as of Aug 13, 2026.</div></div>
+          <div style="display:flex;gap:8px"><button class="btn ghost">${ic('download')} Export</button><button class="btn primary" onclick="show('sales');toast('New invoice — demo')">${ic('plus')} New invoice</button></div>
+        </div>
+
+        <div class="grid cols-4" style="margin-bottom:16px">
+          <div class="card pad kpi"><div style="display:flex;justify-content:space-between"><span class="lbl">Cash on hand</span><span class="ic">${ic('wallet')}</span></div><div class="val num">₱2,418,640</div><span class="delta up">▲ 6.2% <span class="muted" style="font-weight:500">vs Jul</span></span></div>
+          <div class="card pad kpi"><div style="display:flex;justify-content:space-between"><span class="lbl">Sales (MTD)</span><span class="ic">${ic('chart')}</span></div><div class="val num">₱1,732,900</div><span class="delta up">▲ 11.4% <span class="muted" style="font-weight:500">vs Jul</span></span></div>
+          <div class="card pad kpi"><div style="display:flex;justify-content:space-between"><span class="lbl">Accounts receivable</span><span class="ic">${ic('inbox')}</span></div><div class="val num">₱684,210</div><span class="delta down">▲ ₱52k overdue</span></div>
+          <div class="card pad kpi"><div style="display:flex;justify-content:space-between"><span class="lbl">Output VAT due</span><span class="ic">${ic('shield')}</span></div><div class="val num">₱185,668</div><span class="delta"><span class="muted" style="font-weight:500">2550M due Aug 20</span></span></div>
+        </div>
+
+        <div class="grid cols-3" style="margin-bottom:16px">
+          <div class="card" style="grid-column:span 2">
+            <div class="card-h"><h3>Revenue vs Expenses</h3><span class="legend"><span><i style="background:var(--green)"></i>Revenue</span><span><i style="background:var(--series2)"></i>Expenses</span></span></div>
+            <div class="pad">
+              <div class="bars">
+                ${bar('Mar',55,38)}${bar('Apr',62,41)}${bar('May',58,44)}${bar('Jun',71,49)}${bar('Jul',66,46)}${bar('Aug',88,52)}
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-h"><h3>Cash flow</h3><span class="link" onclick="show('reports');subtab('reports','cashflow')">Statement →</span></div>
+            <div class="pad">
+              <div class="row-split"><span class="muted">Operating</span><span class="strong num up">+₱612,400</span></div>
+              <div class="row-split"><span class="muted">Investing</span><span class="strong num down">−₱140,000</span></div>
+              <div class="row-split"><span class="muted">Financing</span><span class="strong num down">−₱85,000</span></div>
+              <div class="row-split"><span class="strong">Net change</span><span class="strong num up">+₱387,400</span></div>
+              <div style="margin-top:14px" class="tny">Healthy operating cash — 4.3 months runway.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid cols-3">
+          <div class="card" style="grid-column:span 2">
+            <div class="card-h"><h3>Recent invoices</h3><span class="link" onclick="show('sales')">View all →</span></div>
+            <table>
+              <thead><tr><th>Invoice</th><th>Customer</th><th class="r">Amount</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr onclick="show('sales');openReceipt()"><td class="mono strong">SI-2026-0442</td><td>Metro Fresh Mart</td><td class="r mono">₱128,800</td><td><span class="pill paid"><span class="dot"></span>Paid</span></td></tr>
+                <tr onclick="show('sales')"><td class="mono strong">SI-2026-0441</td><td>Cebu Grocers Co-op</td><td class="r mono">₱96,320</td><td><span class="pill due"><span class="dot"></span>Due Aug 18</span></td></tr>
+                <tr onclick="show('sales')"><td class="mono strong">SI-2026-0440</td><td>Island Foods Inc.</td><td class="r mono">₱211,456</td><td><span class="pill over"><span class="dot"></span>Overdue 5d</span></td></tr>
+                <tr onclick="show('sales')"><td class="mono strong">SI-2026-0439</td><td>QuickBites Franchise</td><td class="r mono">₱54,880</td><td><span class="pill paid"><span class="dot"></span>Paid</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card">
+            <div class="card-h"><h3>Compliance calendar</h3></div>
+            <div class="pad" style="display:flex;flex-direction:column;gap:14px">
+              <div><div class="row-split" style="border:0;padding:0 0 6px"><span class="strong">BIR 2550M — VAT</span><span class="pill due">Aug 20</span></div><div class="prog"><i style="width:70%"></i></div><div class="tny" style="margin-top:5px">₱185,668 output VAT computed</div></div>
+              <div><div class="row-split" style="border:0;padding:0 0 6px"><span class="strong">BIR 1601-C — W/tax</span><span class="pill paid">Aug 10 ✓</span></div><div class="prog"><i style="width:100%;background:var(--pos)"></i></div><div class="tny" style="margin-top:5px">Filed &amp; paid</div></div>
+              <div><div class="row-split" style="border:0;padding:0 0 6px"><span class="strong">SSS / PhilHealth</span><span class="pill due">Aug 31</span></div><div class="prog"><i style="width:40%"></i></div><div class="tny" style="margin-top:5px">Payroll run pending</div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== SALES / AR ========== -->
+      <section class="page" id="sales">
+        <div id="sales-list">
+          <div class="page-head">
+            <div><h1>Sales &amp; Accounts Receivable</h1><div class="sub">6 open invoices · ₱684,210 outstanding</div></div>
+            <div style="display:flex;gap:8px"><button class="btn ghost" onclick="toast('Send statements — demo')">${ic('mail')} Statements</button><button class="btn primary" onclick="toast('New invoice form — demo')">${ic('plus')} New invoice</button></div>
+          </div>
+          <div class="grid cols-4" style="margin-bottom:16px">
+            <div class="card pad kpi"><span class="lbl">Outstanding</span><div class="val num" style="font-size:22px">₱684,210</div></div>
+            <div class="card pad kpi"><span class="lbl">Overdue</span><div class="val num down" style="font-size:22px">₱263,456</div></div>
+            <div class="card pad kpi"><span class="lbl">Paid (MTD)</span><div class="val num up" style="font-size:22px">₱1,048,690</div></div>
+            <div class="card pad kpi"><span class="lbl">Avg. days to pay</span><div class="val num" style="font-size:22px">18 days</div></div>
+          </div>
+          <div class="card">
+            <div class="card-h"><h3>Invoices</h3><span class="tny">Click a row to open the BIR Sales Invoice / OR</span></div>
+            <table>
+              <thead><tr><th>Invoice #</th><th>Date</th><th>Customer</th><th class="r">Net</th><th class="r">VAT 12%</th><th class="r">Total</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr onclick="openReceipt()"><td class="mono strong">SI-2026-0442</td><td class="mono">Aug 12</td><td>Metro Fresh Mart</td><td class="r mono">₱115,000</td><td class="r mono">₱13,800</td><td class="r mono strong">₱128,800</td><td><span class="pill paid"><span class="dot"></span>Paid</span></td></tr>
+                <tr onclick="openReceipt()"><td class="mono strong">SI-2026-0441</td><td class="mono">Aug 11</td><td>Cebu Grocers Co-op</td><td class="r mono">₱86,000</td><td class="r mono">₱10,320</td><td class="r mono strong">₱96,320</td><td><span class="pill due"><span class="dot"></span>Due Aug 18</span></td></tr>
+                <tr onclick="openReceipt()"><td class="mono strong">SI-2026-0440</td><td class="mono">Aug 08</td><td>Island Foods Inc.</td><td class="r mono">₱188,800</td><td class="r mono">₱22,656</td><td class="r mono strong">₱211,456</td><td><span class="pill over"><span class="dot"></span>Overdue 5d</span></td></tr>
+                <tr onclick="openReceipt()"><td class="mono strong">SI-2026-0439</td><td class="mono">Aug 07</td><td>QuickBites Franchise</td><td class="r mono">₱49,000</td><td class="r mono">₱5,880</td><td class="r mono strong">₱54,880</td><td><span class="pill paid"><span class="dot"></span>Paid</span></td></tr>
+                <tr onclick="openReceipt()"><td class="mono strong">SI-2026-0438</td><td class="mono">Aug 05</td><td>Sunrise Retail Davao</td><td class="r mono">₱142,857</td><td class="r mono">₱17,143</td><td class="r mono strong">₱160,000</td><td><span class="pill due"><span class="dot"></span>Due Aug 20</span></td></tr>
+                <tr onclick="openReceipt()"><td class="mono strong">SI-2026-0437</td><td class="mono">Aug 02</td><td>Northern Provisions</td><td class="r mono">₱73,000</td><td class="r mono">₱8,760</td><td class="r mono strong">₱81,760</td><td><span class="pill draft"><span class="dot"></span>Draft</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Receipt detail -->
+        <div id="sales-doc" style="display:none">
+          <div class="page-head"><button class="btn ghost" onclick="closeReceipt()">${ic('back')} Back to invoices</button><div style="display:flex;gap:8px"><button class="btn ghost" onclick="toast('Emailed to customer — demo')">${ic('mail')} Email</button><button class="btn primary" onclick="toast('Sent to printer — demo')">${ic('print')} Print OR</button></div></div>
+          <div class="doc">
+            <div class="doc-top">
+              <div><div class="co">SUNRISE TRADING CORP.</div><div class="tny">128 Osmeña Blvd, Cebu City 6000</div><div class="tny">VAT Reg TIN: 004-728-951-000</div></div>
+              <div style="text-align:right"><div class="badge-soft">BIR-registered</div><div style="font-weight:800;color:var(--ink);margin-top:8px">SALES INVOICE</div><div class="mono strong">No. SI-2026-0442</div></div>
+            </div>
+            <div class="doc-body">
+              <div style="display:flex;justify-content:space-between;gap:20px;margin-bottom:14px">
+                <div><div class="tny">SOLD TO</div><div class="strong">Metro Fresh Mart</div><div class="tny">TIN: 213-556-002-000</div><div class="tny">Mandaue City, Cebu</div></div>
+                <div style="text-align:right"><div class="kv"><span class="muted">Date&nbsp;&nbsp;</span><span class="mono">Aug 12, 2026</span></div><div class="kv"><span class="muted">Terms&nbsp;&nbsp;</span><span>COD</span></div><div class="kv"><span class="muted">OR No.&nbsp;&nbsp;</span><span class="mono">OR-2026-0388</span></div></div>
+              </div>
+              <table>
+                <thead><tr><th>Qty</th><th>Description</th><th class="r">Unit</th><th class="r">Amount</th></tr></thead>
+                <tbody>
+                  <tr style="cursor:default"><td class="mono">120</td><td>Calamansi Concentrate 1L</td><td class="r mono">₱480</td><td class="r mono">₱57,600</td></tr>
+                  <tr style="cursor:default"><td class="mono">80</td><td>Lemon Syrup 750ml</td><td class="r mono">₱520</td><td class="r mono">₱41,600</td></tr>
+                  <tr style="cursor:default"><td class="mono">100</td><td>Iced Tea Powder 1kg</td><td class="r mono">₱158</td><td class="r mono">₱15,800</td></tr>
+                </tbody>
+              </table>
+              <div style="max-width:260px;margin-left:auto;margin-top:14px">
+                <div class="kv"><span class="muted">VATable sales</span><span class="mono">₱115,000.00</span></div>
+                <div class="kv"><span class="muted">VAT-exempt</span><span class="mono">₱0.00</span></div>
+                <div class="kv"><span class="muted">Output VAT (12%)</span><span class="mono">₱13,800.00</span></div>
+                <div class="kv" style="border-top:1px solid var(--line);margin-top:5px;padding-top:9px"><span class="strong">TOTAL DUE</span><span class="strong mono" style="font-size:16px">₱128,800.00</span></div>
+              </div>
+              <div class="banner" style="margin-top:18px"><span>${ic('check')}</span><span>Posted to <b>Sales Journal</b> &amp; <b>General Ledger</b> · Output VAT flowed to <b>2550M</b> automatically.</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== PURCHASES / AP ========== -->
+      <section class="page" id="purchases">
+        <div class="page-head"><div><h1>Purchases &amp; Accounts Payable</h1><div class="sub">₱412,880 payable · ₱68,400 input VAT claimable</div></div><button class="btn primary" onclick="toast('New bill form — demo')">${ic('plus')} New bill</button></div>
+        <div class="grid cols-4" style="margin-bottom:16px">
+          <div class="card pad kpi"><span class="lbl">Payable</span><div class="val num" style="font-size:22px">₱412,880</div></div>
+          <div class="card pad kpi"><span class="lbl">Due this week</span><div class="val num warn" style="font-size:22px;color:var(--warn)">₱138,200</div></div>
+          <div class="card pad kpi"><span class="lbl">Input VAT claimable</span><div class="val num up" style="font-size:22px">₱68,400</div></div>
+          <div class="card pad kpi"><span class="lbl">EWT withheld</span><div class="val num" style="font-size:22px">₱14,320</div></div>
+        </div>
+        <div class="card">
+          <div class="card-h"><h3>Supplier bills</h3><span class="tny">EWT (2307) auto-computed per supplier ATC</span></div>
+          <table>
+            <thead><tr><th>Bill #</th><th>Supplier</th><th>Date</th><th class="r">Net</th><th class="r">Input VAT</th><th class="r">EWT</th><th class="r">Payable</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr onclick="toast('Bill detail — demo')"><td class="mono strong">BILL-3391</td><td>Pacific Packaging</td><td class="mono">Aug 10</td><td class="r mono">₱180,000</td><td class="r mono">₱21,600</td><td class="r mono">₱1,800</td><td class="r mono strong">₱199,800</td><td><span class="pill due"><span class="dot"></span>Due Aug 15</span></td></tr>
+              <tr onclick="toast('Bill detail — demo')"><td class="mono strong">BILL-3390</td><td>Cebu Sugar Traders</td><td class="mono">Aug 09</td><td class="r mono">₱96,000</td><td class="r mono">₱11,520</td><td class="r mono">₱960</td><td class="r mono strong">₱106,560</td><td><span class="pill paid"><span class="dot"></span>Paid</span></td></tr>
+              <tr onclick="toast('Bill detail — demo')"><td class="mono strong">BILL-3389</td><td>Visayan Logistics</td><td class="mono">Aug 07</td><td class="r mono">₱42,000</td><td class="r mono">₱5,040</td><td class="r mono">₱840</td><td class="r mono strong">₱46,200</td><td><span class="pill over"><span class="dot"></span>Overdue 2d</span></td></tr>
+              <tr onclick="toast('Bill detail — demo')"><td class="mono strong">BILL-3388</td><td>Meralco</td><td class="mono">Aug 05</td><td class="r mono">₱84,700</td><td class="r mono">₱10,164</td><td class="r mono">₱0</td><td class="r mono strong">₱94,864</td><td><span class="pill paid"><span class="dot"></span>Paid</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ========== BANKING ========== -->
+      <section class="page" id="banking">
+        <div class="page-head"><div><h1>Banking &amp; Reconciliation</h1><div class="sub">BDO Current ••4471 · last reconciled Aug 09</div></div><button class="btn primary" onclick="toast('Matched 1 transaction ✓')">${ic('check')} Reconcile</button></div>
+        <div class="grid cols-3" style="margin-bottom:16px">
+          <div class="card pad kpi"><span class="lbl">Statement balance</span><div class="val num" style="font-size:22px">₱2,418,640</div></div>
+          <div class="card pad kpi"><span class="lbl">Book balance</span><div class="val num" style="font-size:22px">₱2,401,190</div></div>
+          <div class="card pad kpi"><span class="lbl">Unreconciled</span><div class="val num warn" style="font-size:22px;color:var(--warn)">4 items</div></div>
+        </div>
+        <div class="card">
+          <div class="card-h"><h3>Match statement lines</h3><span class="tny">Nobuc suggests a match for each line</span></div>
+          <table>
+            <thead><tr><th>Date</th><th>Bank description</th><th class="r">Amount</th><th>Suggested match</th><th class="c">Status</th></tr></thead>
+            <tbody>
+              <tr onclick="toast('Reconciled ✓')"><td class="mono">Aug 12</td><td>DEP METRO FRESH MART</td><td class="r mono up">+₱128,800</td><td class="muted">SI-2026-0442</td><td class="c"><span class="pill unrec"><span class="dot"></span>Review</span></td></tr>
+              <tr onclick="toast('Reconciled ✓')"><td class="mono">Aug 11</td><td>GCASH TRANSFER IN</td><td class="r mono up">+₱54,880</td><td class="muted">SI-2026-0439</td><td class="c"><span class="pill unrec"><span class="dot"></span>Review</span></td></tr>
+              <tr onclick="toast('Reconciled ✓')"><td class="mono">Aug 10</td><td>CHK PACIFIC PACKAGING</td><td class="r mono down">−₱106,560</td><td class="muted">BILL-3390</td><td class="c"><span class="pill unrec"><span class="dot"></span>Review</span></td></tr>
+              <tr style="cursor:default"><td class="mono">Aug 09</td><td>SVC CHARGE</td><td class="r mono down">−₱450</td><td class="muted">Bank fees</td><td class="c"><span class="pill rec"><span class="dot"></span>Matched</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ========== ACCOUNTING ========== -->
+      <section class="page" id="accounting">
+        <div class="page-head"><div><h1>Chart of Accounts &amp; Journals</h1><div class="sub">Double-entry · BIR-registrable Books of Accounts</div></div><button class="btn primary" onclick="toast('New journal entry — demo')">${ic('plus')} Journal entry</button></div>
+        <div class="tabs">
+          <div class="tab active" onclick="subtab('accounting','coa')">Chart of Accounts</div>
+          <div class="tab" onclick="subtab('accounting','journals')">Books of Accounts</div>
+        </div>
+        <div class="subpage show" data-sub="coa">
+          <div class="card">
+            <table>
+              <thead><tr><th>Code</th><th>Account</th><th>Type</th><th class="r">Debit</th><th class="r">Credit</th><th class="r">Balance</th></tr></thead>
+              <tbody>
+                <tr style="cursor:default"><td class="mono">1000</td><td class="strong">Cash in Bank — BDO</td><td class="muted">Asset</td><td class="r mono">₱2,401,190</td><td class="r mono">—</td><td class="r mono strong">₱2,401,190</td></tr>
+                <tr style="cursor:default"><td class="mono">1200</td><td class="strong">Accounts Receivable</td><td class="muted">Asset</td><td class="r mono">₱684,210</td><td class="r mono">—</td><td class="r mono strong">₱684,210</td></tr>
+                <tr style="cursor:default"><td class="mono">1300</td><td class="strong">Inventory</td><td class="muted">Asset</td><td class="r mono">₱1,542,300</td><td class="r mono">—</td><td class="r mono strong">₱1,542,300</td></tr>
+                <tr style="cursor:default"><td class="mono">2000</td><td class="strong">Accounts Payable</td><td class="muted">Liability</td><td class="r mono">—</td><td class="r mono">₱412,880</td><td class="r mono strong">₱412,880</td></tr>
+                <tr style="cursor:default"><td class="mono">2200</td><td class="strong">Output VAT Payable</td><td class="muted">Liability</td><td class="r mono">—</td><td class="r mono">₱185,668</td><td class="r mono strong">₱185,668</td></tr>
+                <tr style="cursor:default"><td class="mono">4000</td><td class="strong">Sales Revenue</td><td class="muted">Income</td><td class="r mono">—</td><td class="r mono">₱1,732,900</td><td class="r mono strong">₱1,732,900</td></tr>
+                <tr style="cursor:default"><td class="mono">5000</td><td class="strong">Cost of Goods Sold</td><td class="muted">Expense</td><td class="r mono">₱982,140</td><td class="r mono">—</td><td class="r mono strong">₱982,140</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="subpage" data-sub="journals">
+          <div class="banner"><span>${ic('shield')}</span><span>These six books print in <b>BIR-registrable format</b> — Sales, Purchase, Cash Receipts, Cash Disbursement, General Journal &amp; General Ledger.</span></div>
+          <div class="grid cols-3">
+            ${jbook('Sales Journal','142 entries','₱1,732,900')}
+            ${jbook('Purchase Journal','98 entries','₱1,204,600')}
+            ${jbook('Cash Receipts Journal','120 entries','₱2,010,400')}
+            ${jbook('Cash Disbursement Journal','156 entries','₱1,688,200')}
+            ${jbook('General Journal','34 entries','₱612,000')}
+            ${jbook('General Ledger','all accounts','balanced ✓')}
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== BIR & TAX ========== -->
+      <section class="page" id="bir">
+        <div class="page-head"><div><h1>BIR &amp; Tax</h1><div class="sub">VAT, withholding &amp; summary lists — generated from your books</div></div><button class="btn primary" onclick="toast('.DAT file generated — demo')">${ic('download')} Generate .DAT</button></div>
+        <div class="tabs">
+          <div class="tab active" onclick="subtab('bir','vat')">VAT Return (2550M)</div>
+          <div class="tab" onclick="subtab('bir','slsp')">SLSP</div>
+          <div class="tab" onclick="subtab('bir','forms')">Forms</div>
+        </div>
+        <div class="subpage show" data-sub="vat">
+          <div class="grid cols-2">
+            <div class="card">
+              <div class="card-h"><h3>BIR Form 2550M — August 2026</h3><span class="pill due">Due Aug 20</span></div>
+              <div class="pad">
+                <div class="row-split"><span class="muted">Vatable sales</span><span class="mono strong">₱1,547,233</span></div>
+                <div class="row-split"><span class="muted">Output VAT (12%)</span><span class="mono strong">₱185,668</span></div>
+                <div class="row-split"><span class="muted">Input VAT (purchases)</span><span class="mono strong">₱68,400</span></div>
+                <div class="row-split"><span class="muted">Less: creditable/carry-over</span><span class="mono">₱0</span></div>
+                <div class="row-split"><span class="strong">VAT still payable</span><span class="mono strong up" style="font-size:16px">₱117,268</span></div>
+                <button class="btn primary" style="width:100%;justify-content:center;margin-top:14px" onclick="toast('Filed via eBIRForms — demo')">${ic('check')} Review &amp; file</button>
+              </div>
+            </div>
+            <div class="card pad">
+              <h3 style="margin-bottom:6px">How it's built</h3>
+              <p class="muted" style="font-size:13px">Every VATable sale and purchase you post flows straight into this return — no re-encoding. Nobuc reconciles it against your Sales &amp; Purchase Journals before you file.</p>
+              <div class="banner" style="margin-top:6px"><span>${ic('check')}</span><span>Return ties out to the General Ledger — <b>Output VAT Payable ₱185,668</b>.</span></div>
+              <div class="tny">Supports 2550M (monthly) &amp; 2550Q (quarterly) with .DAT export.</div>
+            </div>
+          </div>
+        </div>
+        <div class="subpage" data-sub="slsp">
+          <div class="card">
+            <div class="card-h"><h3>Summary List of Sales &amp; Purchases</h3><span class="tny">Relief / .DAT ready</span></div>
+            <table>
+              <thead><tr><th>TIN</th><th>Registered name</th><th>Type</th><th class="r">Taxable</th><th class="r">VAT</th></tr></thead>
+              <tbody>
+                <tr style="cursor:default"><td class="mono">213-556-002-000</td><td>Metro Fresh Mart</td><td><span class="pill paid">Sales</span></td><td class="r mono">₱115,000</td><td class="r mono">₱13,800</td></tr>
+                <tr style="cursor:default"><td class="mono">445-901-233-000</td><td>Island Foods Inc.</td><td><span class="pill paid">Sales</span></td><td class="r mono">₱188,800</td><td class="r mono">₱22,656</td></tr>
+                <tr style="cursor:default"><td class="mono">118-220-771-000</td><td>Pacific Packaging</td><td><span class="pill draft">Purchase</span></td><td class="r mono">₱180,000</td><td class="r mono">₱21,600</td></tr>
+                <tr style="cursor:default"><td class="mono">332-887-119-000</td><td>Cebu Sugar Traders</td><td><span class="pill draft">Purchase</span></td><td class="r mono">₱96,000</td><td class="r mono">₱11,520</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="subpage" data-sub="forms">
+          <div class="grid cols-3">
+            ${birform('2550M','Monthly VAT','Ready','due')}
+            ${birform('2550Q','Quarterly VAT','Next Oct 25','draft')}
+            ${birform('1601-C','W/tax on comp.','Filed ✓','paid')}
+            ${birform('2307','Creditable W/tax','12 issued','paid')}
+            ${birform('1701Q','Income tax (Q)','Draft','draft')}
+            ${birform('1604-C','Annual info','Year-end','draft')}
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== REPORTS ========== -->
+      <section class="page" id="reports">
+        <div class="page-head"><div><h1>Financial Reports</h1><div class="sub">As of August 13, 2026 · accrual basis</div></div><button class="btn ghost" onclick="toast('Exported to Excel — demo')">${ic('download')} Export</button></div>
+        <div class="tabs">
+          <div class="tab active" onclick="subtab('reports','pl')">Income Statement</div>
+          <div class="tab" onclick="subtab('reports','bs')">Balance Sheet</div>
+          <div class="tab" onclick="subtab('reports','cashflow')">Cash Flow</div>
+        </div>
+        <div class="subpage show" data-sub="pl">
+          <div class="card" style="max-width:620px">
+            <div class="card-h"><h3>Income Statement — Aug 2026</h3></div>
+            <div class="pad">
+              ${line('Sales Revenue','₱1,732,900',1)} ${line('Less: Cost of Goods Sold','(₱982,140)')}
+              ${line('Gross Profit','₱750,760',1)}
+              ${line('Operating Expenses','',0,1)}
+              ${line('&nbsp;&nbsp;Salaries &amp; Wages','(₱214,500)')} ${line('&nbsp;&nbsp;Rent','(₱85,000)')} ${line('&nbsp;&nbsp;Utilities','(₱48,200)')} ${line('&nbsp;&nbsp;Other','(₱62,300)')}
+              ${line('Net Income','₱340,760',1,0,1)}
+            </div>
+          </div>
+        </div>
+        <div class="subpage" data-sub="bs">
+          <div class="card" style="max-width:620px">
+            <div class="card-h"><h3>Balance Sheet — as of Aug 13, 2026</h3></div>
+            <div class="pad">
+              ${line('ASSETS','',0,1)} ${line('&nbsp;&nbsp;Cash in Bank','₱2,401,190')} ${line('&nbsp;&nbsp;Accounts Receivable','₱684,210')} ${line('&nbsp;&nbsp;Inventory','₱1,542,300')}
+              ${line('Total Assets','₱4,627,700',1)}
+              ${line('LIABILITIES &amp; EQUITY','',0,1)} ${line('&nbsp;&nbsp;Accounts Payable','₱412,880')} ${line('&nbsp;&nbsp;VAT Payable','₱185,668')} ${line('&nbsp;&nbsp;Owner&rsquo;s Equity','₱4,029,152')}
+              ${line('Total Liab. &amp; Equity','₱4,627,700',1,0,1)}
+              <div class="banner" style="margin-top:14px"><span>${ic('check')}</span><span>Balanced — <b>Assets = Liabilities + Equity</b>.</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="subpage" data-sub="cashflow">
+          <div class="card" style="max-width:620px">
+            <div class="card-h"><h3>Cash Flow Statement — Aug 2026</h3></div>
+            <div class="pad">
+              ${line('Operating Activities','',0,1)} ${line('&nbsp;&nbsp;Net income','₱340,760')} ${line('&nbsp;&nbsp;Change in AR/AP','₱271,640')}
+              ${line('Net from Operations','₱612,400',1)}
+              ${line('Investing Activities','(₱140,000)',1)} ${line('Financing Activities','(₱85,000)',1)}
+              ${line('Net Change in Cash','₱387,400',1,0,1)}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== PAYROLL ========== -->
+      <section class="page" id="payroll">
+        <div class="page-head"><div><h1>Payroll <span class="badge-soft" style="vertical-align:middle">Native PH</span></h1><div class="sub">Aug 16–31 cut-off · SSS · PhilHealth · Pag-IBIG · BIR withholding</div></div><button class="btn primary" onclick="toast('Payroll run started — demo')">${ic('play')} Run payroll</button></div>
+        <div class="grid cols-4" style="margin-bottom:16px">
+          <div class="card pad kpi"><span class="lbl">Employees</span><div class="val num" style="font-size:22px">24</div></div>
+          <div class="card pad kpi"><span class="lbl">Gross pay</span><div class="val num" style="font-size:22px">₱268,400</div></div>
+          <div class="card pad kpi"><span class="lbl">Statutory deductions</span><div class="val num" style="font-size:22px">₱38,912</div></div>
+          <div class="card pad kpi"><span class="lbl">Net pay</span><div class="val num up" style="font-size:22px">₱229,488</div></div>
+        </div>
+        <div class="card">
+          <div class="card-h"><h3>Payroll register — Aug 16–31</h3><span class="tny">Click a row to view the payslip</span></div>
+          <table>
+            <thead><tr><th>Employee</th><th>Position</th><th class="r">Basic</th><th class="r">OT / ND</th><th class="r">SSS</th><th class="r">PhilHealth</th><th class="r">Pag-IBIG</th><th class="r">W/tax</th><th class="r">Net pay</th></tr></thead>
+            <tbody>
+              <tr onclick="toast('Payslip — demo')"><td class="strong">Maria Santos</td><td class="muted">Accountant</td><td class="r mono">₱18,000</td><td class="r mono">₱1,200</td><td class="r mono">₱900</td><td class="r mono">₱450</td><td class="r mono">₱200</td><td class="r mono">₱1,340</td><td class="r mono strong">₱16,310</td></tr>
+              <tr onclick="toast('Payslip — demo')"><td class="strong">Juan Dela Cruz</td><td class="muted">Warehouse Lead</td><td class="r mono">₱14,500</td><td class="r mono">₱2,100</td><td class="r mono">₱720</td><td class="r mono">₱363</td><td class="r mono">₱200</td><td class="r mono">₱680</td><td class="r mono strong">₱14,637</td></tr>
+              <tr onclick="toast('Payslip — demo')"><td class="strong">Ana Reyes</td><td class="muted">Sales Rep</td><td class="r mono">₱13,000</td><td class="r mono">₱3,400</td><td class="r mono">₱720</td><td class="r mono">₱325</td><td class="r mono">₱200</td><td class="r mono">₱590</td><td class="r mono strong">₱14,565</td></tr>
+              <tr onclick="toast('Payslip — demo')"><td class="strong">Pedro Lim</td><td class="muted">Driver</td><td class="r mono">₱12,000</td><td class="r mono">₱1,800</td><td class="r mono">₱630</td><td class="r mono">₱300</td><td class="r mono">₱200</td><td class="r mono">₱420</td><td class="r mono strong">₱12,250</td></tr>
+              <tr onclick="toast('Payslip — demo')"><td class="strong">Grace Tan</td><td class="muted">Cashier</td><td class="r mono">₱11,500</td><td class="r mono">₱900</td><td class="r mono">₱585</td><td class="r mono">₱288</td><td class="r mono">₱200</td><td class="r mono">₱310</td><td class="r mono strong">₱11,017</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="banner" style="margin-top:16px"><span>${ic('check')}</span><span>Payroll posts to the <b>General Ledger</b> and feeds <b>1601-C</b> automatically — no double entry.</span></div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  /* ---------- icon set (inline, referenced in template above) ---------- */
+  function ic(n){
+    const p={
+      grid:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+      doc:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>',
+      cart:'<circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.4 12.3a1.5 1.5 0 0 0 1.5 1.2h8.2a1.5 1.5 0 0 0 1.5-1.2L22 7H6"/>',
+      bank:'<path d="M3 10h18M5 10v8m4-8v8m6-8v8m4-8v8M3 20h18M12 3l9 5H3z"/>',
+      book:'<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19a2 2 0 0 0 2 2h13"/>',
+      shield:'<path d="M12 3l8 3v6c0 5-3.4 8-8 9-4.6-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+      chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+      users:'<circle cx="9" cy="8" r="3.2"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M17 5.5a3 3 0 0 1 0 5.8M21.5 20a5.5 5.5 0 0 0-4-5.3"/>',
+      search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/>',
+      plus:'<path d="M12 5v14M5 12h14"/>', bell:'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 8h18s-3-1-3-8M13.7 21a2 2 0 0 1-3.4 0"/>',
+      moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>', sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4 12H2m20 0h-2M5 5l1.5 1.5M17.5 17.5 19 19M19 5l-1.5 1.5M6.5 17.5 5 19"/>',
+      download:'<path d="M12 3v12m0 0 4-4m-4 4-4-4M4 21h16"/>', wallet:'<path d="M3 7a2 2 0 0 1 2-2h13v4M3 7v10a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1v-3M3 7h16"/><circle cx="17" cy="14" r="1.3"/>',
+      inbox:'<path d="M4 13h4l1.5 3h5L16 13h4M4 13 6 5h12l2 8v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/>',
+      mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>', print:'<path d="M6 9V3h12v6M6 18H4a1 1 0 0 1-1-1v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a1 1 0 0 1-1 1h-2M6 14h12v7H6z"/>',
+      back:'<path d="M19 12H5m0 0 6 6m-6-6 6-6"/>', check:'<path d="M20 6 9 17l-5-5"/>', play:'<path d="M6 4l14 8-14 8z"/>'
+    };
+    return '<svg viewBox="0 0 24 24">'+(p[n]||'')+'</svg>';
+  }
+  function bar(m,r,e){return '<div class="bar"><div style="width:64%;display:flex;flex-direction:column;justify-content:flex-end;gap:3px;height:100%"><div class="fill soft" style="height:'+e+'%"></div><div class="fill" style="height:'+r+'%"></div></div><div class="cap">'+m+'</div></div>';}
+  function jbook(t,c,v){return '<div class="card pad" style="cursor:pointer" onclick="toast(\''+t+' — demo\')"><div style="display:flex;justify-content:space-between;align-items:center"><span class="strong">'+t+'</span><span class="pill paid">BIR</span></div><div class="tny" style="margin:6px 0 10px">'+c+'</div><div class="strong mono" style="font-size:16px">'+v+'</div></div>';}
+  function birform(n,d,s,cls){return '<div class="card pad" style="cursor:pointer" onclick="toast(\'BIR '+n+' — demo\')"><div style="display:flex;justify-content:space-between;align-items:center"><span class="strong mono">'+n+'</span><span class="pill '+cls+'">'+s+'</span></div><div class="tny" style="margin-top:6px">'+d+'</div></div>';}
+  function line(l,v,strong,head,total){
+    let s='display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--line);font-size:13.5px;';
+    if(head)s+='font-weight:700;color:var(--ink);border-bottom:0;padding-top:14px;';
+    if(total)s+='border-top:2px solid var(--line);border-bottom:0;margin-top:4px;font-size:15px;';
+    return '<div style="'+s+'"><span'+(strong&&!head?' class="strong"':'')+'>'+l+'</span><span class="mono'+(strong?' strong':'')+'">'+v+'</span></div>';
+  }
+
+  /* ---------- render templates (markup uses placeholder tokens) ---------- */
+  // Evaluate the icon/bar/book/form/line placeholders written into the markup:
+  (function hydrate(){
+    const root=document.body;
+    root.innerHTML=root.innerHTML.replace(/\$\{ic\('(\w+)'\)\}/g,(_,n)=>ic(n))
+      .replace(/\$\{bar\('([^']+)',(\d+),(\d+)\)\}/g,(_,m,r,e)=>bar(m,+r,+e))
+      .replace(/\$\{jbook\('([^']*)','([^']*)','([^']*)'\)\}/g,(_,t,c,v)=>jbook(t,c,v))
+      .replace(/\$\{birform\('([^']*)','([^']*)','([^']*)','([^']*)'\)\}/g,(_,n,d,s,c)=>birform(n,d,s,c))
+      .replace(/\$\{line\('([^']*)','([^']*)'(?:,(\d))?(?:,(\d))?(?:,(\d))?\)\}/g,(_,l,v,a,b,c)=>line(l,v,+a||0,+b||0,+c||0));
+    bindAll();
+  })();
+
+  /* ---------- navigation ---------- */
+  const titles={dashboard:'Dashboard',sales:'Sales & AR',purchases:'Purchases & AP',banking:'Banking',accounting:'Chart & Journals',bir:'BIR & Tax',reports:'Reports',payroll:'Payroll'};
+  function show(id){
+    document.querySelectorAll('.page').forEach(p=>p.classList.toggle('show',p.id===id));
+    document.querySelectorAll('[data-nav]').forEach(n=>n.classList.toggle('active',n.dataset.nav===id));
+    const c=document.getElementById('crumb'); if(c)c.textContent=titles[id]||id;
+    if(id==='sales')closeReceipt();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function subtab(page,sub){
+    const sec=document.getElementById(page);
+    sec.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.getAttribute('onclick').includes("'"+sub+"'")));
+    sec.querySelectorAll('.subpage').forEach(s=>s.classList.toggle('show',s.dataset.sub===sub));
+  }
+  function openReceipt(){document.getElementById('sales-list').style.display='none';document.getElementById('sales-doc').style.display='block';window.scrollTo({top:0,behavior:'smooth'});}
+  function closeReceipt(){const d=document.getElementById('sales-doc'),l=document.getElementById('sales-list');if(d)d.style.display='none';if(l)l.style.display='block';}
+
+  function bindAll(){
+    document.querySelectorAll('[data-nav]').forEach(n=>{
+      n.setAttribute('tabindex','0');
+      n.setAttribute('role','button');
+      n.addEventListener('click',()=>show(n.dataset.nav));
+      n.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();show(n.dataset.nav);}});
+    });
+    document.querySelectorAll('.tab').forEach(t=>t.setAttribute('tabindex','0'));
+    document.querySelectorAll('tbody tr[onclick]').forEach(r=>{
+      r.setAttribute('tabindex','0');
+      r.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();r.click();}});
+    });
+  }
+
+  /* ---------- theme ---------- */
+  function toggleTheme(){
+    const r=document.documentElement;
+    const dark=r.getAttribute('data-theme')==='dark'||(!r.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme:dark)').matches);
+    r.setAttribute('data-theme',dark?'light':'dark');
+    document.getElementById('themeBtn').innerHTML=ic(dark?'moon':'sun');
+    toast(dark?'Light mode':'Dark mode');
+  }
+
+  /* ---------- toast ---------- */
+  let tt;
+  function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),1800);}
+</script>
+</body>
+</html>
