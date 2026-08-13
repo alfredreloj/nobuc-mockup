@@ -201,6 +201,37 @@
   .modal-bg{position:fixed;inset:0;background:rgba(10,20,14,.5);display:none;align-items:flex-start;justify-content:center;padding:40px 16px;z-index:70;overflow-y:auto}
   .modal-bg.show{display:flex}
   .badge-soft{display:inline-flex;align-items:center;gap:6px;background:var(--green-soft);color:var(--green-deep);font-weight:700;font-size:11px;padding:3px 9px;border-radius:20px}
+  /* module hub */
+  .modgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:1000px){.modgrid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:620px){.modgrid{grid-template-columns:1fr}}
+  .mod{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm);padding:20px;cursor:pointer;display:flex;flex-direction:column;gap:9px;font:inherit;color:inherit;transition:border-color .15s,transform .07s,box-shadow .15s}
+  .mod:hover{border-color:var(--green);transform:translateY(-2px);box-shadow:var(--shadow)}
+  .mod:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+  .mod-ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--green-soft);color:var(--green-deep)}
+  .mod-ic svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8}
+  .mod-t{font-weight:700;font-size:15.5px;color:var(--ink);display:flex;align-items:center;gap:8px}
+  .mod-d{font-size:12.8px;color:var(--muted);line-height:1.45}
+  .mod-meta{margin-top:auto;font-size:11.5px;font-weight:600;color:var(--green-deep);display:inline-flex;align-items:center;gap:6px;padding-top:4px}
+  .mod .tag{font-size:9.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:20px;background:var(--green);color:#fff}
+  /* POS terminal */
+  .pos-wrap{display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start}
+  @media(max-width:900px){.pos-wrap{grid-template-columns:1fr}}
+  .prodgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  @media(max-width:560px){.prodgrid{grid-template-columns:repeat(2,1fr)}}
+  .prod{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);padding:13px;cursor:pointer;transition:border-color .12s,transform .06s}
+  .prod:hover{border-color:var(--green);transform:translateY(-1px)}
+  .prod .pn{font-weight:600;font-size:13px;color:var(--ink)}
+  .prod .pp{font-weight:700;font-size:14px;color:var(--green-deep);margin-top:6px}
+  .chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
+  .chip{font-size:12px;font-weight:600;padding:6px 12px;border-radius:20px;border:1px solid var(--line);background:var(--surface);cursor:pointer;color:var(--muted)}
+  .chip.on{background:var(--green-soft);color:var(--green-deep);border-color:transparent}
+  .ticket{position:sticky;top:80px}
+  .tk-line{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13px}
+  .tk-line .qty{color:var(--faint);font-variant-numeric:tabular-nums;margin-right:8px}
+  .pay-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+  .pay{padding:9px;border:1px solid var(--line);border-radius:var(--r-sm);text-align:center;font-weight:600;font-size:12.5px;cursor:pointer;background:var(--surface)}
+  .pay.on{background:var(--green);color:#fff;border-color:var(--green)}
   .nav-item:focus-visible,.tab:focus-visible,.co-btn:focus-visible,.btn:focus-visible,.icon-btn:focus-visible,tbody tr:focus-visible,.card-h .link:focus-visible{outline:2px solid var(--green);outline-offset:2px;border-radius:6px}
   @media(max-width:860px){.app{grid-template-columns:1fr}.side{display:none}}
 </style>
@@ -220,8 +251,14 @@
       </button>
     </div>
     <nav id="nav">
-      <div class="nav-group">Overview</div>
-      <div class="nav-item active" data-nav="dashboard">${ic('grid')}<span>Dashboard</span></div>
+      <div class="nav-item active" data-nav="hub">${ic('home')}<span>Home</span></div>
+      <div class="nav-item" data-nav="dashboard">${ic('grid')}<span>Dashboard</span></div>
+
+      <div class="nav-group">Operations</div>
+      <div class="nav-item" data-nav="pos">${ic('pos')}<span>Sales &amp; POS</span></div>
+      <div class="nav-item" data-nav="inventory">${ic('box')}<span>Inventory</span><span class="badge">6</span></div>
+      <div class="nav-item" data-nav="production">${ic('factory')}<span>Production</span></div>
+      <div class="nav-item" data-nav="franchise">${ic('store')}<span>Franchise</span></div>
 
       <div class="nav-group">Transactions</div>
       <div class="nav-item" data-nav="sales">${ic('doc')}<span>Sales &amp; AR</span><span class="badge">6</span></div>
@@ -254,8 +291,28 @@
     </div>
 
     <div class="content">
+      <!-- ========== HOME / MODULE HUB ========== -->
+      <section class="page show" id="hub">
+        <div class="page-head">
+          <div><h1>Welcome to Nobuc</h1><div class="sub">Your whole business in one system — pick a module to begin.</div></div>
+          <button class="btn ghost" onclick="show('dashboard')">${ic('grid')} Open dashboard</button>
+        </div>
+        <div class="banner"><span>${ic('check')}</span><span>One login, one database. Every module below posts to the <b>same double-entry ledger</b> — sales, stock, production and payroll all reconcile automatically. That's what a spreadsheet or a bookkeeping-only app can't do.</span></div>
+        <div class="modgrid">
+          <button class="mod" onclick="show('pos')"><span class="mod-ic">${ic('pos')}</span><span class="mod-t">Sales &amp; POS</span><span class="mod-d">Ring up sales at the counter — cash, GCash or card. Posts revenue and deducts stock instantly.</span><span class="mod-meta">₱42,180 sold today</span></button>
+          <button class="mod" onclick="show('inventory')"><span class="mod-ic">${ic('box')}</span><span class="mod-t">Inventory &amp; Commissary</span><span class="mod-d">Track stock across the commissary and every branch at weighted-average cost.</span><span class="mod-meta">₱1.54M on hand · 6 low</span></button>
+          <button class="mod" onclick="show('production')"><span class="mod-ic">${ic('factory')}</span><span class="mod-t">Production</span><span class="mod-d">Make finished goods from recipes — consumes raw materials, books yield &amp; variance.</span><span class="mod-meta">4 batches this week</span></button>
+          <button class="mod" onclick="show('franchise')"><span class="mod-ic">${ic('store')}</span><span class="mod-t">Franchise</span><span class="mod-d">Manage franchisees and auto-compute royalties from each branch's sales.</span><span class="mod-meta">12 branches · ₱184.5k due</span></button>
+          <button class="mod" onclick="show('accounting')"><span class="mod-ic">${ic('book')}</span><span class="mod-t">Accounting <span class="tag">Core</span></span><span class="mod-d">Double-entry GL, chart of accounts and the six BIR-registrable books.</span><span class="mod-meta">Books balanced ✓</span></button>
+          <button class="mod" onclick="show('bir')"><span class="mod-ic">${ic('shield')}</span><span class="mod-t">BIR &amp; Tax <span class="tag">PH</span></span><span class="mod-d">VAT (2550M/Q), SLSP, 1601-C, 2307 — generated from your books, not re-encoded.</span><span class="mod-meta">2550M due Aug 20</span></button>
+          <button class="mod" onclick="show('payroll')"><span class="mod-ic">${ic('users')}</span><span class="mod-t">Payroll <span class="tag">PH</span></span><span class="mod-d">SSS, PhilHealth, Pag-IBIG and BIR withholding — computed and posted to the GL.</span><span class="mod-meta">24 employees</span></button>
+          <button class="mod" onclick="show('reports')"><span class="mod-ic">${ic('chart')}</span><span class="mod-t">Reports</span><span class="mod-d">Income Statement, Balance Sheet and Cash Flow — real-time, accrual basis.</span><span class="mod-meta">As of Aug 13</span></button>
+          <button class="mod" onclick="toast('Ask Nobuc AI — demo')"><span class="mod-ic">${ic('spark')}</span><span class="mod-t">Ask Nobuc AI</span><span class="mod-d">Ask questions in plain language — "top products this month?", "who owes me?"</span><span class="mod-meta">Built in</span></button>
+        </div>
+      </section>
+
       <!-- ========== DASHBOARD ========== -->
-      <section class="page show" id="dashboard">
+      <section class="page" id="dashboard">
         <div class="page-head">
           <div><h1>Good morning, Alfred 👋</h1><div class="sub">Here's how Sunrise Trading is doing — as of Aug 13, 2026.</div></div>
           <div style="display:flex;gap:8px"><button class="btn ghost">${ic('download')} Export</button><button class="btn primary" onclick="show('sales');toast('New invoice — demo')">${ic('plus')} New invoice</button></div>
@@ -581,6 +638,136 @@
         <div class="banner" style="margin-top:16px"><span>${ic('check')}</span><span>Payroll posts to the <b>General Ledger</b> and feeds <b>1601-C</b> automatically — no double entry.</span></div>
       </section>
 
+      <!-- ========== SALES & POS ========== -->
+      <section class="page" id="pos">
+        <div class="page-head"><div><h1>Sales &amp; POS</h1><div class="sub">Terminal 1 · Cashier: Grace Tan · Aug 13, 2026</div></div><button class="btn primary" onclick="toast('New sale — demo')">${ic('plus')} New sale</button></div>
+        <div class="grid cols-3" style="margin-bottom:16px">
+          <div class="card pad kpi"><span class="lbl">Sales today</span><div class="val num" style="font-size:22px">₱42,180</div></div>
+          <div class="card pad kpi"><span class="lbl">Transactions</span><div class="val num" style="font-size:22px">86</div></div>
+          <div class="card pad kpi"><span class="lbl">Avg. ticket</span><div class="val num" style="font-size:22px">₱490</div></div>
+        </div>
+        <div class="pos-wrap">
+          <div class="card pad">
+            <div class="chips"><span class="chip on" onclick="posCat(this)">All</span><span class="chip" onclick="posCat(this)">Drinks</span><span class="chip" onclick="posCat(this)">Syrups</span><span class="chip" onclick="posCat(this)">Powders</span><span class="chip" onclick="posCat(this)">Add-ons</span></div>
+            <div class="prodgrid">
+              <div class="prod" onclick="toast('Added: Calamansi 1L')"><div class="pn">Calamansi 1L</div><div class="pp">₱480</div></div>
+              <div class="prod" onclick="toast('Added: Lemon Syrup 750ml')"><div class="pn">Lemon Syrup 750ml</div><div class="pp">₱520</div></div>
+              <div class="prod" onclick="toast('Added: Iced Tea 1kg')"><div class="pn">Iced Tea 1kg</div><div class="pp">₱158</div></div>
+              <div class="prod" onclick="toast('Added: Cucumber Cooler')"><div class="pn">Cucumber Cooler</div><div class="pp">₱95</div></div>
+              <div class="prod" onclick="toast('Added: Dalandan 1L')"><div class="pn">Dalandan 1L</div><div class="pp">₱460</div></div>
+              <div class="prod" onclick="toast('Added: Honey 500ml')"><div class="pn">Honey 500ml</div><div class="pp">₱240</div></div>
+            </div>
+          </div>
+          <div class="card pad ticket">
+            <h3 style="margin-bottom:10px">Current order</h3>
+            <div class="tk-line"><span><span class="qty">2×</span>Calamansi 1L</span><span class="mono">₱960</span></div>
+            <div class="tk-line"><span><span class="qty">1×</span>Iced Tea 1kg</span><span class="mono">₱158</span></div>
+            <div class="tk-line"><span><span class="qty">1×</span>Cucumber Cooler</span><span class="mono">₱95</span></div>
+            <div style="margin-top:12px">
+              <div class="kv"><span class="muted">Subtotal (net)</span><span class="mono">₱1,081.25</span></div>
+              <div class="kv"><span class="muted">VAT 12%</span><span class="mono">₱129.75</span></div>
+              <div class="kv" style="border-top:1px solid var(--line);padding-top:8px;margin-top:4px"><span class="strong">Total</span><span class="strong mono" style="font-size:16px">₱1,211.00</span></div>
+            </div>
+            <div class="pay-row"><span class="pay on" onclick="posPay(this)">Cash</span><span class="pay" onclick="posPay(this)">GCash</span><span class="pay" onclick="posPay(this)">Card</span></div>
+            <button class="btn primary" style="width:100%;justify-content:center" onclick="toast('Sale charged — posted to GL + stock ↓')">${ic('check')} Charge ₱1,211.00</button>
+          </div>
+        </div>
+        <div class="banner" style="margin-top:16px"><span>${ic('check')}</span><span>Each sale books revenue + output VAT to the GL and deducts inventory at WAC — in real time.</span></div>
+      </section>
+
+      <!-- ========== INVENTORY & COMMISSARY ========== -->
+      <section class="page" id="inventory">
+        <div class="page-head"><div><h1>Inventory &amp; Commissary</h1><div class="sub">Central commissary + 4 branches · weighted-average cost</div></div><button class="btn primary" onclick="toast('Stock transfer — demo')">${ic('plus')} New transfer</button></div>
+        <div class="grid cols-4" style="margin-bottom:16px">
+          <div class="card pad kpi"><span class="lbl">Stock value</span><div class="val num" style="font-size:22px">₱1,542,300</div></div>
+          <div class="card pad kpi"><span class="lbl">Active SKUs</span><div class="val num" style="font-size:22px">148</div></div>
+          <div class="card pad kpi"><span class="lbl">Low stock</span><div class="val num" style="font-size:22px;color:var(--warn)">6</div></div>
+          <div class="card pad kpi"><span class="lbl">Pending transfers</span><div class="val num" style="font-size:22px">3</div></div>
+        </div>
+        <div class="card">
+          <div class="card-h"><h3>Stock on hand</h3><span class="tny">Valued at weighted-average cost</span></div>
+          <table>
+            <thead><tr><th>SKU</th><th>Item</th><th class="r">On hand</th><th class="r">Reorder pt</th><th class="r">WAC cost</th><th class="r">Value</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr onclick="toast('Item card — demo')"><td class="mono">CAL-1L</td><td>Calamansi Concentrate 1L</td><td class="r mono">1,240</td><td class="r mono">400</td><td class="r mono">₱312.40</td><td class="r mono strong">₱387,376</td><td><span class="pill paid"><span class="dot"></span>In stock</span></td></tr>
+              <tr onclick="toast('Item card — demo')"><td class="mono">LEM-750</td><td>Lemon Syrup 750ml</td><td class="r mono">860</td><td class="r mono">300</td><td class="r mono">₱344.10</td><td class="r mono strong">₱295,926</td><td><span class="pill paid"><span class="dot"></span>In stock</span></td></tr>
+              <tr onclick="toast('Item card — demo')"><td class="mono">SUG-25</td><td>Refined Sugar 25kg</td><td class="r mono">48</td><td class="r mono">60</td><td class="r mono">₱1,540</td><td class="r mono strong">₱73,920</td><td><span class="pill due"><span class="dot"></span>Low</span></td></tr>
+              <tr onclick="toast('Item card — demo')"><td class="mono">BTL-1L</td><td>PET Bottle 1L (case 100)</td><td class="r mono">22</td><td class="r mono">40</td><td class="r mono">₱780</td><td class="r mono strong">₱17,160</td><td><span class="pill over"><span class="dot"></span>Reorder</span></td></tr>
+              <tr onclick="toast('Item card — demo')"><td class="mono">ICE-1K</td><td>Iced Tea Powder 1kg</td><td class="r mono">610</td><td class="r mono">200</td><td class="r mono">₱96.80</td><td class="r mono strong">₱59,048</td><td><span class="pill paid"><span class="dot"></span>In stock</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="banner" style="margin-top:16px"><span>${ic('check')}</span><span>Every receipt, sale, transfer and production run updates <b>weighted-average cost</b> — the commissary feeds all four branches from one stock pool.</span></div>
+      </section>
+
+      <!-- ========== PRODUCTION ========== -->
+      <section class="page" id="production">
+        <div class="page-head"><div><h1>Production <span class="badge-soft" style="vertical-align:middle">Make from recipe</span></h1><div class="sub">Turn raw materials into finished goods — BOM, yield &amp; variance</div></div><button class="btn primary" onclick="toast('Production batch posted — GL + stock updated')">${ic('play')} Produce batch</button></div>
+        <div class="grid cols-4" style="margin-bottom:16px">
+          <div class="card pad kpi"><span class="lbl">Batches this week</span><div class="val num" style="font-size:22px">4</div></div>
+          <div class="card pad kpi"><span class="lbl">Output value</span><div class="val num" style="font-size:22px">₱248,000</div></div>
+          <div class="card pad kpi"><span class="lbl">Materials consumed</span><div class="val num" style="font-size:22px">₱182,400</div></div>
+          <div class="card pad kpi"><span class="lbl">Avg yield variance</span><div class="val num up" style="font-size:22px">+1.2%</div></div>
+        </div>
+        <div class="grid cols-2">
+          <div class="card">
+            <div class="card-h"><h3>Batch: Calamansi Concentrate 1L × 100</h3><span class="pill draft">Draft</span></div>
+            <table>
+              <thead><tr><th>Component</th><th class="r">Qty</th><th class="r">WAC</th><th class="r">Cost</th></tr></thead>
+              <tbody>
+                <tr style="cursor:default"><td>Fresh Calamansi</td><td class="r mono">60 kg</td><td class="r mono">₱85</td><td class="r mono">₱5,100</td></tr>
+                <tr style="cursor:default"><td>Refined Sugar</td><td class="r mono">40 kg</td><td class="r mono">₱62</td><td class="r mono">₱2,480</td></tr>
+                <tr style="cursor:default"><td>PET Bottle 1L</td><td class="r mono">100 pc</td><td class="r mono">₱8</td><td class="r mono">₱800</td></tr>
+              </tbody>
+            </table>
+            <div class="pad" style="padding-top:14px">
+              <div class="kv"><span class="muted">Total material cost</span><span class="mono strong">₱8,380</span></div>
+              <div class="kv"><span class="muted">Unit cost (÷100)</span><span class="mono">₱83.80</span></div>
+              <div class="kv"><span class="muted">Standard cost</span><span class="mono">₱82.00</span></div>
+              <div class="kv"><span class="strong">Variance</span><span class="mono strong down">+₱1.80 / unit</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-h"><h3>Recent production runs</h3></div>
+            <table>
+              <thead><tr><th>Batch</th><th>Product</th><th class="r">Qty</th><th class="r">Cost</th></tr></thead>
+              <tbody>
+                <tr onclick="toast('Batch detail — demo')"><td class="mono strong">PR-0219</td><td>Lemon Syrup 750ml</td><td class="r mono">200</td><td class="r mono">₱68,200</td></tr>
+                <tr onclick="toast('Batch detail — demo')"><td class="mono strong">PR-0218</td><td>Calamansi 1L</td><td class="r mono">100</td><td class="r mono">₱8,380</td></tr>
+                <tr onclick="toast('Batch detail — demo')"><td class="mono strong">PR-0217</td><td>Iced Tea Powder 1kg</td><td class="r mono">150</td><td class="r mono">₱14,100</td></tr>
+                <tr onclick="toast('Batch detail — demo')"><td class="mono strong">PR-0216</td><td>Dalandan 1L</td><td class="r mono">120</td><td class="r mono">₱9,840</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="banner" style="margin-top:16px"><span>${ic('check')}</span><span>Producing a batch consumes raw materials at WAC, books finished goods into inventory, and posts the <b>cost variance to the GL</b> — the F33 production journal.</span></div>
+      </section>
+
+      <!-- ========== FRANCHISE ========== -->
+      <section class="page" id="franchise">
+        <div class="page-head"><div><h1>Franchise Management</h1><div class="sub">Company-owned + franchised branches · royalties auto-computed</div></div><button class="btn primary" onclick="toast('Royalty invoices generated — demo')">${ic('doc')} Bill royalties</button></div>
+        <div class="grid cols-4" style="margin-bottom:16px">
+          <div class="card pad kpi"><span class="lbl">Active branches</span><div class="val num" style="font-size:22px">12</div></div>
+          <div class="card pad kpi"><span class="lbl">Royalties due</span><div class="val num" style="font-size:22px">₱184,500</div></div>
+          <div class="card pad kpi"><span class="lbl">Network sales (MTD)</span><div class="val num" style="font-size:22px">₱6,842,000</div></div>
+          <div class="card pad kpi"><span class="lbl">Compliance</span><div class="val num up" style="font-size:22px">100%</div></div>
+        </div>
+        <div class="card">
+          <div class="card-h"><h3>Franchisees</h3><span class="tny">Royalty = % of branch POS sales, billed as AR</span></div>
+          <table>
+            <thead><tr><th>Branch</th><th>Franchisee</th><th class="r">Sales (MTD)</th><th class="r">Royalty %</th><th class="r">Royalty due</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr onclick="toast('Branch detail — demo')"><td class="strong">Cebu IT Park</td><td>M. Villanueva</td><td class="r mono">₱842,000</td><td class="r mono">5%</td><td class="r mono strong">₱42,100</td><td><span class="pill paid"><span class="dot"></span>Current</span></td></tr>
+              <tr onclick="toast('Branch detail — demo')"><td class="strong">Ayala Center</td><td>R. Santos</td><td class="r mono">₱736,500</td><td class="r mono">5%</td><td class="r mono strong">₱36,825</td><td><span class="pill paid"><span class="dot"></span>Current</span></td></tr>
+              <tr onclick="toast('Branch detail — demo')"><td class="strong">SM Seaside</td><td>J. Tan</td><td class="r mono">₱918,200</td><td class="r mono">5%</td><td class="r mono strong">₱45,910</td><td><span class="pill due"><span class="dot"></span>Due Aug 20</span></td></tr>
+              <tr onclick="toast('Branch detail — demo')"><td class="strong">Mandaue Hi-way</td><td>L. Reyes</td><td class="r mono">₱604,800</td><td class="r mono">4%</td><td class="r mono strong">₱24,192</td><td><span class="pill paid"><span class="dot"></span>Current</span></td></tr>
+              <tr onclick="toast('Branch detail — demo')"><td class="strong">Lapu-Lapu</td><td>A. Cruz</td><td class="r mono">₱709,300</td><td class="r mono">5%</td><td class="r mono strong">₱35,465</td><td><span class="pill over"><span class="dot"></span>Overdue</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="banner" style="margin-top:16px"><span>${ic('check')}</span><span>Royalties are computed straight from each branch's POS sales and posted as <b>receivables</b> — no manual tallying, no leakage.</span></div>
+      </section>
+
     </div>
   </div>
 </div>
@@ -605,7 +792,13 @@
       download:'<path d="M12 3v12m0 0 4-4m-4 4-4-4M4 21h16"/>', wallet:'<path d="M3 7a2 2 0 0 1 2-2h13v4M3 7v10a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1v-3M3 7h16"/><circle cx="17" cy="14" r="1.3"/>',
       inbox:'<path d="M4 13h4l1.5 3h5L16 13h4M4 13 6 5h12l2 8v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/>',
       mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>', print:'<path d="M6 9V3h12v6M6 18H4a1 1 0 0 1-1-1v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a1 1 0 0 1-1 1h-2M6 14h12v7H6z"/>',
-      back:'<path d="M19 12H5m0 0 6 6m-6-6 6-6"/>', check:'<path d="M20 6 9 17l-5-5"/>', play:'<path d="M6 4l14 8-14 8z"/>'
+      back:'<path d="M19 12H5m0 0 6 6m-6-6 6-6"/>', check:'<path d="M20 6 9 17l-5-5"/>', play:'<path d="M6 4l14 8-14 8z"/>',
+      home:'<path d="M3 11l9-8 9 8M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/>',
+      pos:'<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>',
+      box:'<path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8"/>',
+      factory:'<path d="M3 21V9l6 4V9l6 4V5l6 4v12zM3 21h18"/>',
+      store:'<path d="M4 9l1.2-5h13.6L20 9M5 9v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9M4 9h16"/>',
+      spark:'<path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/>'
     };
     return '<svg viewBox="0 0 24 24">'+(p[n]||'')+'</svg>';
   }
@@ -632,7 +825,7 @@
   })();
 
   /* ---------- navigation ---------- */
-  const titles={dashboard:'Dashboard',sales:'Sales & AR',purchases:'Purchases & AP',banking:'Banking',accounting:'Chart & Journals',bir:'BIR & Tax',reports:'Reports',payroll:'Payroll'};
+  const titles={hub:'Home',dashboard:'Dashboard',pos:'Sales & POS',inventory:'Inventory',production:'Production',franchise:'Franchise',sales:'Sales & AR',purchases:'Purchases & AP',banking:'Banking',accounting:'Chart & Journals',bir:'BIR & Tax',reports:'Reports',payroll:'Payroll'};
   function show(id){
     document.querySelectorAll('.page').forEach(p=>p.classList.toggle('show',p.id===id));
     document.querySelectorAll('[data-nav]').forEach(n=>n.classList.toggle('active',n.dataset.nav===id));
@@ -674,6 +867,10 @@
   /* ---------- toast ---------- */
   let tt;
   function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),1800);}
+
+  /* ---------- POS interactions ---------- */
+  function posCat(el){el.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');}
+  function posPay(el){el.parentElement.querySelectorAll('.pay').forEach(p=>p.classList.remove('on'));el.classList.add('on');}
 </script>
 </body>
 </html>
