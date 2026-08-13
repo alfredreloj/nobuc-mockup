@@ -95,8 +95,11 @@
   /* ---------- Topbar ---------- */
   .main{display:flex;flex-direction:column;min-width:0}
   .top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--ground) 85%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:12px 26px}
-  .crumb{color:var(--faint);font-size:13px}
+  .crumb{color:var(--faint);font-size:13px;display:flex;align-items:center}
   .crumb b{color:var(--ink);font-weight:600}
+  .home-link{color:var(--muted);font-weight:600;cursor:pointer}
+  .home-link:hover{color:var(--green-deep)}
+  .crumb-sep{margin:0 3px;color:var(--faint)}
   .search{margin-left:8px;flex:1;max-width:340px;display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:7px 13px;color:var(--faint)}
   .search svg{width:16px;height:16px;flex:none;stroke:currentColor;fill:none;stroke-width:1.9}
   .search input{border:0;background:transparent;outline:none;color:var(--body);width:100%;font:inherit}
@@ -282,7 +285,8 @@
   <!-- ===== Main ===== -->
   <div class="main">
     <div class="top">
-      <div class="crumb"><b id="crumb">Dashboard</b></div>
+      <button class="icon-btn" id="homeBtn" title="Back to Home" onclick="show('hub')" style="display:none">${ic('home')}</button>
+      <div class="crumb"><span class="home-link" onclick="show('hub')" style="display:none">Home</span><span class="crumb-sep" style="display:none"> / </span><b id="crumb">Home</b></div>
       <div class="search">${ic('search')}<input placeholder="Search invoices, contacts, accounts…" onkeydown="if(event.key==='Enter')toast('Search — demo')"></div>
       <div class="spacer"></div>
       <button class="icon-btn" title="New" onclick="toast('Quick add — demo')">${ic('plus')}</button>
@@ -830,6 +834,10 @@
     document.querySelectorAll('.page').forEach(p=>p.classList.toggle('show',p.id===id));
     document.querySelectorAll('[data-nav]').forEach(n=>n.classList.toggle('active',n.dataset.nav===id));
     const c=document.getElementById('crumb'); if(c)c.textContent=titles[id]||id;
+    const onHub=id==='hub';
+    document.getElementById('homeBtn').style.display=onHub?'none':'grid';
+    document.querySelector('.home-link').style.display=onHub?'none':'inline';
+    document.querySelector('.crumb-sep').style.display=onHub?'none':'inline';
     if(id==='sales')closeReceipt();
     window.scrollTo({top:0,behavior:'smooth'});
   }
