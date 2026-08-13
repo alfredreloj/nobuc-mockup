@@ -91,6 +91,7 @@
   .app.nav-collapsed .co-btn{justify-content:center;padding:8px}
   .app.nav-collapsed .nav-item{justify-content:center;padding:10px 0}
   .app.nav-collapsed .foot{justify-content:center}
+  .app.nav-collapsed .nav-sec .nav-sec-body{display:block}
   .side{background:var(--sidebar);border-right:1px solid var(--line);display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
   .side .brand{padding:20px 20px 14px;display:flex;align-items:center;justify-content:space-between}
   .co-switch{padding:0 14px 12px}
@@ -100,7 +101,11 @@
   .co-btn .sub{color:var(--faint);font-size:11px}
   .co-btn .chev{margin-left:auto;color:var(--faint)}
   nav{padding:6px 10px;overflow-y:auto;flex:1}
-  .nav-group{margin:10px 6px 4px;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  .nav-group{display:flex;align-items:center;justify-content:space-between;gap:6px;width:calc(100% - 12px);margin:10px 6px 4px;padding:4px 5px;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);background:none;border:0;cursor:pointer;font-family:inherit;border-radius:6px}
+  .nav-group:hover{color:var(--muted);background:var(--green-tint)}
+  .nav-group .caret{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.6;transition:transform .18s ease;opacity:.85}
+  .nav-sec.collapsed .caret{transform:rotate(-90deg)}
+  .nav-sec.collapsed .nav-sec-body{display:none}
   .nav-item{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:var(--r-sm);color:var(--sidebar-ink);cursor:pointer;font-weight:500;margin-bottom:1px}
   .nav-item svg{width:17px;height:17px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8}
   .nav-item:hover{background:var(--green-tint);color:var(--ink)}
@@ -275,24 +280,40 @@
       <div class="nav-item active" data-nav="hub">${ic('home')}<span>Home</span></div>
       <div class="nav-item" data-nav="dashboard">${ic('grid')}<span>Dashboard</span></div>
 
-      <div class="nav-group">Operations</div>
-      <div class="nav-item" data-nav="pos">${ic('pos')}<span>Sales &amp; POS</span></div>
-      <div class="nav-item" data-nav="inventory">${ic('box')}<span>Inventory</span><span class="badge">6</span></div>
-      <div class="nav-item" data-nav="production">${ic('factory')}<span>Production</span></div>
-      <div class="nav-item" data-nav="franchise">${ic('store')}<span>Franchise</span></div>
+      <div class="nav-sec">
+        <button class="nav-group" onclick="toggleSec(this)">Operations <svg class="caret" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="nav-sec-body">
+          <div class="nav-item" data-nav="pos">${ic('pos')}<span>Sales &amp; POS</span></div>
+          <div class="nav-item" data-nav="inventory">${ic('box')}<span>Inventory</span><span class="badge">6</span></div>
+          <div class="nav-item" data-nav="production">${ic('factory')}<span>Production</span></div>
+          <div class="nav-item" data-nav="franchise">${ic('store')}<span>Franchise</span></div>
+        </div>
+      </div>
 
-      <div class="nav-group">Transactions</div>
-      <div class="nav-item" data-nav="sales">${ic('doc')}<span>Sales &amp; AR</span><span class="badge">6</span></div>
-      <div class="nav-item" data-nav="purchases">${ic('cart')}<span>Purchases &amp; AP</span></div>
-      <div class="nav-item" data-nav="banking">${ic('bank')}<span>Banking</span><span class="badge">4</span></div>
+      <div class="nav-sec">
+        <button class="nav-group" onclick="toggleSec(this)">Transactions <svg class="caret" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="nav-sec-body">
+          <div class="nav-item" data-nav="sales">${ic('doc')}<span>Sales &amp; AR</span><span class="badge">6</span></div>
+          <div class="nav-item" data-nav="purchases">${ic('cart')}<span>Purchases &amp; AP</span></div>
+          <div class="nav-item" data-nav="banking">${ic('bank')}<span>Banking</span><span class="badge">4</span></div>
+        </div>
+      </div>
 
-      <div class="nav-group">Accounting</div>
-      <div class="nav-item" data-nav="accounting">${ic('book')}<span>Chart &amp; Journals</span></div>
-      <div class="nav-item" data-nav="bir">${ic('shield')}<span>BIR &amp; Tax</span></div>
-      <div class="nav-item" data-nav="reports">${ic('chart')}<span>Reports</span></div>
+      <div class="nav-sec">
+        <button class="nav-group" onclick="toggleSec(this)">Accounting <svg class="caret" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="nav-sec-body">
+          <div class="nav-item" data-nav="accounting">${ic('book')}<span>Chart &amp; Journals</span></div>
+          <div class="nav-item" data-nav="bir">${ic('shield')}<span>BIR &amp; Tax</span></div>
+          <div class="nav-item" data-nav="reports">${ic('chart')}<span>Reports</span></div>
+        </div>
+      </div>
 
-      <div class="nav-group">People</div>
-      <div class="nav-item" data-nav="payroll">${ic('users')}<span>Payroll</span></div>
+      <div class="nav-sec">
+        <button class="nav-group" onclick="toggleSec(this)">People <svg class="caret" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="nav-sec-body">
+          <div class="nav-item" data-nav="payroll">${ic('users')}<span>Payroll</span></div>
+        </div>
+      </div>
     </nav>
     <div class="foot">
       <span class="avatar">AR</span>
@@ -892,6 +913,9 @@
     document.getElementById('themeBtn').innerHTML=ic(dark?'moon':'sun');
     toast(dark?'Light mode':'Dark mode');
   }
+
+  /* ---------- collapsible nav sections ---------- */
+  function toggleSec(btn){ btn.closest('.nav-sec').classList.toggle('collapsed'); }
 
   /* ---------- collapsible sidebar ---------- */
   function toggleSidebar(){
