@@ -51,8 +51,11 @@
     font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
     -webkit-font-smoothing:antialiased;overflow:hidden;
   }
-  #stage{position:fixed;inset:0;display:grid;place-items:center}
-  #deck{width:var(--slide-w);height:var(--slide-h);position:relative;transform:scale(var(--s));transform-origin:center center}
+  #stage{position:fixed;inset:0;overflow:hidden}
+  /* absolute + translate, NOT grid centring: a scaled child is still 1280px wide in layout,
+     and grid pushes an oversized item off-screen on any viewport narrower than that */
+  #deck{width:var(--slide-w);height:var(--slide-h);position:absolute;left:50%;top:50%;
+        transform:translate(-50%,-50%) scale(var(--s));transform-origin:center center}
 
   .slide{
     position:absolute;inset:0;display:none;flex-direction:column;
@@ -194,22 +197,77 @@
 
   /* ---------- Overview grid ---------- */
   body.grid{overflow:auto}
-  body.grid #stage{position:static;display:block;padding:22px}
-  body.grid #deck{width:auto;height:auto;transform:none;display:grid;
+  body.grid #stage{position:static;display:block;padding:22px;overflow:visible}
+  body.grid #deck{position:static;width:auto;height:auto;transform:none;display:grid;
                   grid-template-columns:repeat(4,1fr);gap:16px}
   body.grid .slide{position:relative;inset:auto;display:flex;zoom:var(--gz);cursor:pointer;
                    border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow)}
   body.grid .slide:hover{border-color:var(--green)}
   body.grid #hint{display:none}
 
+  /* ---------- Reading mode: phones, tablets and short windows ----------
+     A 1280×720 stage scaled into a phone leaves ~5px body text, so below the
+     threshold the deck stops being slides and becomes a scrollable document:
+     every slide is a full-width section at normal reading sizes, in order. */
+  @media (max-width:1099px),(max-height:599px){
+    body{overflow:auto}
+    #stage{position:static;overflow:visible}
+    #deck{position:static;width:auto;height:auto;transform:none;display:block}
+    .slide{position:relative;inset:auto;display:flex!important;width:100%;height:auto;
+           padding:34px 22px 30px;border-bottom:1px solid var(--line);overflow:visible}
+    .slide .progress{display:none}
+    .cover{background:linear-gradient(160deg,var(--green-tint) 0%,var(--surface) 70%)}
+
+    h1{font-size:32px} h2{font-size:24px} .lede{font-size:16px}
+    .kicker{font-size:11px;margin-bottom:9px} .rule{margin:14px 0 18px}
+    .logo.big{font-size:42px} .logo.big .sprout{width:24px;height:24px;margin-top:-16px}
+    .cover .meta{flex-wrap:wrap;gap:8px 16px;margin-top:22px;font-size:13px}
+
+    .body{display:block!important}
+    .cols,.sys,.pipe,.phases{grid-template-columns:1fr!important;gap:12px!important}
+    .stack{gap:12px}
+    .cols+.cols,.body>.stack+.stack{margin-top:12px}
+    .seams{display:none}                    /* the seam pills only read between four boxes in a row */
+    .step:not(:last-child)::after{display:none}
+    .oneline{flex-wrap:wrap;gap:8px 18px;font-size:14px}
+    .card h3{font-size:16px} .card p{font-size:14px}
+    ul.pts li{font-size:15px} ul.pts.tight li{font-size:14px}
+    .steps{gap:14px}
+
+    /* the comparison table keeps its columns and scrolls sideways inside its own box */
+    .tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .tablewrap table{min-width:640px}
+    td.c{width:auto}
+
+    .foot{position:static;margin-top:24px}
+    #hud,#hint{display:none}
+  }
+
+  /* On a phone the comparison table can't hold four columns, and a sideways scroll
+     hides the very thing the slide exists to show — so each row becomes a small card
+     with its three verdicts labelled (labels are filled in from the header by JS). */
+  @media (max-width:700px){
+    .tablewrap table{min-width:0}
+    .tablewrap thead{display:none}
+    .tablewrap tbody tr{display:block;padding:12px 0;border-bottom:1px solid var(--line)}
+    .tablewrap tbody td{display:block;border:0;padding:1px 0;font-size:14px}
+    .tablewrap tbody td:first-child{margin-bottom:5px}
+    .tablewrap tbody td.c{text-align:left;width:auto;font-size:13.5px}
+    .tablewrap tbody td.c::before{content:attr(data-label) " — ";color:var(--muted);font-weight:600}
+  }
+
   /* ---------- Print → PDF (Chrome: landscape, no margins) ---------- */
   @page{size:1280px 720px;margin:0}
   @media print{
     body{overflow:visible;background:#fff}
-    #stage{position:static;display:block}
-    #deck{width:1280px;height:auto;transform:none;display:block}
+    #stage{position:static;display:block;overflow:visible}
+    /* position must be reset too — a left/top of 50% would offset every printed page */
+    #deck{position:static;left:auto;top:auto;width:1280px;height:auto;transform:none;display:block}
     .slide{position:relative;inset:auto;display:flex!important;zoom:1;width:1280px;height:720px;
            break-after:page;page-break-after:always;border:0;box-shadow:none}
+    /* without this the final page break emits a trailing blank page */
+    .slide:last-of-type{break-after:auto;page-break-after:auto}
+    .tablewrap{overflow:visible}
     #hud,#hint{display:none}
   }
 </style>
@@ -442,6 +500,7 @@
     <h2>Built for the BIR, not localised for it afterwards.</h2>
     <div class="rule"></div>
     <div class="body">
+      <div class="tablewrap">
       <table>
         <thead>
           <tr><th>Requirement</th><th class="c">Nobuc</th><th class="c">Global cloud accounting</th><th class="c">Standalone POS</th></tr>
@@ -457,6 +516,7 @@
           <tr><td>Documentation pack for computerised-books accreditation</td><td class="c yes">Included</td><td class="c part">Via local partner</td><td class="c no">n/a</td></tr>
         </tbody>
       </table>
+      </div>
       <p class="note">We benchmarked a leading global cloud accounting suite before building this: in the Philippines it produces no registrable books of accounts, no native returns, and needs a third-party app for payroll. That gap is the reason Nobuc exists. Filing remains your accountant's professional judgement — Nobuc produces the books and worksheets that back it.</p>
     </div>
     <div class="foot"><span class="logo sm"><span class="no">no</span><span class="buc">buc</span></span><span class="sep"></span><span>Nobuc for F&amp;B</span><span class="pgnum"></span></div>
@@ -681,6 +741,15 @@
     document.documentElement.style.setProperty('--gz',(colw/1280).toFixed(4));
   }
 
+  /* label each verdict cell from its column header, so the phone layout can show
+     "Nobuc — Native" once the table restacks and the header row is hidden */
+  document.querySelectorAll('.tablewrap table').forEach(t=>{
+    const heads=[...t.querySelectorAll('thead th')].slice(1).map(th=>th.textContent.trim());
+    t.querySelectorAll('tbody tr').forEach(tr=>{
+      [...tr.querySelectorAll('td.c')].forEach((td,k)=>{ td.dataset.label=heads[k]||''; });
+    });
+  });
+
   /* ---------- slide chrome: page numbers + progress bar ---------- */
   slides.forEach((s,n)=>{
     const p=s.querySelector('.pgnum'); if(p)p.textContent=(n+1)+' / '+slides.length;
@@ -693,6 +762,9 @@
     const bar=slides[i].querySelector('.progress');
     if(bar)bar.style.width=((i+1)/slides.length*100)+'%';
     if(location.hash!=='#'+(i+1))history.replaceState(null,'','#'+(i+1));
+    /* in reading mode every slide is on screen, so a jump means scrolling to it */
+    if(matchMedia('(max-width:1099px),(max-height:599px)').matches)
+      slides[i].scrollIntoView({block:'start'});
   }
   const next=()=>go(i+1), prev=()=>go(i-1);
 
@@ -733,6 +805,23 @@
   document.getElementById('btnGrid').onclick=()=>toggleGrid();
   document.getElementById('btnTheme').onclick=toggleTheme;
   addEventListener('resize',fit);
+
+  /* ---------- touch: swipe, and tap the right/left edge of the slide ----------
+     Only in slide mode — reading mode is a scrolling document, where a tap that
+     jumps the reader somewhere else would be wrong. */
+  const reading=matchMedia('(max-width:1099px),(max-height:599px)');
+  let tx=0,ty=0;
+  addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY;},{passive:true});
+  addEventListener('touchend',e=>{
+    if(reading.matches||document.body.classList.contains('grid'))return;
+    const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
+    if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)){dx<0?next():prev();}
+  },{passive:true});
+  document.getElementById('stage').addEventListener('click',e=>{
+    if(reading.matches||document.body.classList.contains('grid'))return;
+    if(e.target.closest('a,button'))return;          /* never hijack a demo link */
+    (e.clientX>innerWidth*0.35?next:prev)();
+  });
 
   /* show the controls on pointer activity, then get out of the way again */
   const hud=document.getElementById('hud'), hint=document.getElementById('hint');
