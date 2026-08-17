@@ -1,0 +1,772 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Nobuc for Food &amp; Beverage — client presentation</title>
+<!--
+  Nobuc · F&B market pitch deck
+  Self-contained 16:9 presentation. Fonts are the mockup's self-hosted Inter files (./fonts).
+  Controls: → / ← / Space / Home / End · O or Esc = overview grid · P = print (PDF) · T = theme
+  Client name + date can be passed in the URL: deck-fnb.html?client=Sunrise%20Group&date=18%20Aug%202026
+-->
+<style>
+  /* ---------- Self-hosted Inter (latin + latin-ext so the ₱ peso sign U+20B1 always renders) ---------- */
+  @font-face{font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/inter-400.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+  @font-face{font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/inter-ext-400.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+  @font-face{font-family:'Inter';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/inter-500.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+  @font-face{font-family:'Inter';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/inter-ext-500.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+  @font-face{font-family:'Inter';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/inter-600.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+  @font-face{font-family:'Inter';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/inter-ext-600.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+  @font-face{font-family:'Inter';font-style:normal;font-weight:700;font-display:swap;src:url(fonts/inter-700.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+  @font-face{font-family:'Inter';font-style:normal;font-weight:700;font-display:swap;src:url(fonts/inter-ext-700.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+  @font-face{font-family:'Inter';font-style:normal;font-weight:800;font-display:swap;src:url(fonts/inter-800.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+  @font-face{font-family:'Inter';font-style:normal;font-weight:800;font-display:swap;src:url(fonts/inter-ext-800.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+
+  /* ---------- Nobuc design tokens (same palette as the product mockup) ---------- */
+  :root{
+    --green:#22b24b; --green-deep:#1c9640; --green-soft:#e7f6ec; --green-tint:#f4f9f5;
+    --ink:#141414; --body:#20272e; --muted:#6b7280; --faint:#98a1ac;
+    --ground:#f4f7f5; --surface:#ffffff; --surface-2:#fafcfb;
+    --line:#e7ede8; --line-2:#eef2ef;
+    --neg:#d64545; --neg-bg:#fbeaea; --warn:#c67510; --warn-bg:#fdf1e0;
+    --shadow:0 1px 2px rgba(20,30,25,.05),0 10px 30px rgba(20,30,25,.06);
+    --slide-w:1280px; --slide-h:720px; --s:1;
+  }
+  [data-theme="dark"]{
+    --green:#35c962; --green-deep:#27a94f; --green-soft:#12301f; --green-tint:#101a14;
+    --ink:#f2f5f3; --body:#dde5e0; --muted:#9daaa3; --faint:#7d8a83;
+    --ground:#0c110e; --surface:#141c17; --surface-2:#18211b;
+    --line:#26302a; --line-2:#202a24;
+    --neg:#f07373; --neg-bg:#2a1616; --warn:#e0a04a; --warn-bg:#2a2113;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+  }
+
+  /* ---------- Shell ---------- */
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;background:var(--ground);color:var(--body);
+    font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+    -webkit-font-smoothing:antialiased;overflow:hidden;
+  }
+  #stage{position:fixed;inset:0;display:grid;place-items:center}
+  #deck{width:var(--slide-w);height:var(--slide-h);position:relative;transform:scale(var(--s));transform-origin:center center}
+
+  .slide{
+    position:absolute;inset:0;display:none;flex-direction:column;
+    background:var(--surface);color:var(--body);
+    padding:58px 68px 62px;overflow:hidden;
+  }
+  .slide.on{display:flex}
+
+  /* ---------- Slide chrome ---------- */
+  .kicker{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--green-deep);margin:0 0 14px}
+  h1{font-size:56px;line-height:1.04;letter-spacing:-.035em;font-weight:800;color:var(--ink);margin:0}
+  /* balance keeps a two-line headline from dropping a single orphan word onto line two */
+  h2{font-size:40px;line-height:1.1;letter-spacing:-.032em;font-weight:800;color:var(--ink);margin:0 0 10px;text-wrap:balance}
+  .lede{font-size:20px;line-height:1.5;color:var(--muted);margin:0;max-width:78ch}
+  .rule{height:3px;width:52px;background:var(--green);border-radius:2px;margin:18px 0 22px}
+  p{margin:0}
+
+  .foot{position:absolute;left:68px;right:68px;bottom:24px;display:flex;align-items:center;gap:12px;
+        font-size:11.5px;color:var(--faint);letter-spacing:.02em}
+  .foot .sep{flex:1}
+  .pgnum{font-variant-numeric:tabular-nums;font-weight:600;color:var(--muted)}
+  .progress{position:absolute;left:0;top:0;height:3px;background:var(--green);width:0;transition:width .25s ease}
+
+  /* ---------- Logo ---------- */
+  .logo{font-weight:800;letter-spacing:-.03em;line-height:1;display:inline-flex;align-items:center;font-size:22px}
+  .logo .no{color:var(--ink)} .logo .buc{color:var(--green)}
+  .logo .sprout{width:13px;height:13px;margin-left:1px;margin-top:-8px}
+  .logo.big{font-size:64px} .logo.big .sprout{width:36px;height:36px;margin-top:-24px;margin-left:2px}
+  .logo.sm{font-size:15px} .logo.sm .sprout{width:9px;height:9px;margin-top:-6px}
+
+  /* ---------- Layout helpers ---------- */
+  /* the body fills the space under the headline and centres its content, so no slide
+     leaves a dead band above the footer regardless of how much copy it carries */
+  .body{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:0}
+  .body.cols{display:grid;align-content:center}
+  .cols{display:grid;gap:26px}
+  .c2{grid-template-columns:1fr 1fr}
+  .c2u{grid-template-columns:1.15fr .85fr}
+  .c3{grid-template-columns:repeat(3,1fr)}
+  .stack{display:flex;flex-direction:column;gap:14px}
+
+  .card{background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+  .card.plain{background:var(--surface)}
+  .card h3{margin:0 0 7px;font-size:17px;font-weight:700;color:var(--ink);letter-spacing:-.01em}
+  .card p{font-size:14.5px;line-height:1.55;color:var(--muted)}
+  .card .num{font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .card .num em{font-style:normal;color:var(--neg)}
+
+  ul.pts{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:13px}
+  ul.pts li{position:relative;padding-left:26px;font-size:16px;line-height:1.5;color:var(--body)}
+  ul.pts li::before{content:"";position:absolute;left:0;top:8px;width:9px;height:9px;border-radius:3px;background:var(--green)}
+  ul.pts li b{color:var(--ink);font-weight:650}
+  ul.pts.tight li{font-size:15px;line-height:1.45}
+
+  .note{font-size:12.5px;line-height:1.5;color:var(--faint);margin-top:14px}
+  .tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+       padding:4px 9px;border-radius:999px;background:var(--green-soft);color:var(--green-deep)}
+  .tag.warn{background:var(--warn-bg);color:var(--warn)}
+
+  /* ---------- Cover ---------- */
+  .cover{background:linear-gradient(160deg,var(--green-tint) 0%,var(--surface) 58%);justify-content:center}
+  .cover .meta{margin-top:34px;display:flex;gap:26px;align-items:center;font-size:14px;color:var(--muted)}
+  .cover .meta b{color:var(--ink);font-weight:650}
+  .cover .dot{width:4px;height:4px;border-radius:50%;background:var(--line);display:inline-block}
+
+  /* ---------- Slide 2: today's stack ---------- */
+  .sys{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:stretch}
+  .sys .box{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:14px 14px 16px;text-align:center}
+  .sys .box .ttl{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px}
+  .sys .box .sub{font-size:12px;color:var(--muted);line-height:1.4}
+  .seams{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px;padding:0 12%}
+  .seam{text-align:center;font-size:11.5px;font-weight:650;color:var(--neg);background:var(--neg-bg);
+        border-radius:999px;padding:5px 8px}
+
+  /* ---------- Slide 4: pipeline ---------- */
+  .pipe{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+  .step{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:16px 12px;text-align:center;position:relative}
+  .step .n{font-size:11px;font-weight:800;color:var(--green-deep);letter-spacing:.1em}
+  .step .t{font-size:14.5px;font-weight:700;color:var(--ink);margin:6px 0 5px;letter-spacing:-.01em}
+  .step .d{font-size:12px;color:var(--muted);line-height:1.42}
+  .step:not(:last-child)::after{content:"";position:absolute;right:-9px;top:50%;width:8px;height:2px;background:var(--line);transform:translateY(-50%)}
+  .oneline{margin-top:20px;background:var(--green-soft);border:1px solid var(--green);border-radius:12px;
+           padding:16px 20px;display:flex;gap:22px;align-items:center;color:var(--green-deep);font-weight:650;font-size:15px}
+  .oneline span{display:inline-flex;align-items:center;gap:8px}
+  .oneline .k{width:7px;height:7px;border-radius:2px;background:var(--green)}
+
+  /* ---------- Tables ---------- */
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line)}
+  thead th{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:700;
+           border-bottom:1px solid var(--line)}
+  tbody td:first-child{color:var(--ink);font-weight:600}
+  td.c{text-align:center;font-weight:700;width:132px}
+  .yes{color:var(--green-deep)} .no{color:var(--neg)} .part{color:var(--warn)}
+  .mini{font-size:12.5px}
+  .mini td,.mini th{padding:7px 10px}
+  .num-cell{text-align:right;font-variant-numeric:tabular-nums}
+
+  /* ---------- Rollout ---------- */
+  .phases{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .phase{border:1px solid var(--line);border-radius:12px;background:var(--surface-2);padding:16px 16px 18px}
+  .phase .wk{font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--green-deep)}
+  .phase h4{margin:7px 0 8px;font-size:15.5px;color:var(--ink);letter-spacing:-.01em}
+  .phase p{font-size:12.5px;line-height:1.5;color:var(--muted)}
+  .bar{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:16px}
+  .bar div{height:6px;border-radius:3px;background:var(--green);opacity:.28}
+  .bar div:nth-child(1){opacity:1} .bar div:nth-child(2){opacity:.76} .bar div:nth-child(3){opacity:.52}
+
+  /* ---------- Demo links ---------- */
+  a.demo{display:block;text-decoration:none;background:var(--surface-2);border:1px solid var(--line);
+         border-radius:14px;padding:20px 22px;transition:border-color .15s ease,transform .15s ease}
+  a.demo:hover{border-color:var(--green);transform:translateY(-2px)}
+  a.demo .t{font-size:17px;font-weight:700;color:var(--ink);letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+  a.demo .t .arrow{color:var(--green);font-weight:800}
+  a.demo p{font-size:13.5px;color:var(--muted);line-height:1.5;margin-top:6px}
+  .url{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;color:var(--green-deep);
+       background:var(--green-soft);border-radius:8px;padding:10px 14px;display:inline-block;margin-top:6px}
+
+  /* ---------- Steps (closing) ---------- */
+  .steps{display:flex;flex-direction:column;gap:16px}
+  .stp{display:flex;gap:16px;align-items:flex-start}
+  .stp .i{flex:none;width:34px;height:34px;border-radius:10px;background:var(--green);color:#fff;
+          display:grid;place-items:center;font-weight:800;font-size:15px}
+  .stp .t{font-size:17px;font-weight:700;color:var(--ink);letter-spacing:-.01em}
+  .stp p{font-size:14px;color:var(--muted);line-height:1.5;margin-top:3px}
+
+  /* ---------- Controls ---------- */
+  /* controls fade out while presenting so they never sit on top of the slide footer */
+  #hud{position:fixed;right:16px;bottom:14px;display:flex;gap:6px;z-index:20;
+       opacity:0;transition:opacity .3s ease;pointer-events:none}
+  #hud.show{opacity:1;pointer-events:auto}
+  #hud button{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:var(--surface);
+              color:var(--muted);font-size:14px;cursor:pointer;display:grid;place-items:center;box-shadow:var(--shadow)}
+  #hud button:hover{border-color:var(--green);color:var(--green-deep)}
+  #hud button:focus-visible,a.demo:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+  #hint{position:fixed;left:16px;bottom:18px;font-size:11.5px;color:var(--faint);z-index:20;
+        opacity:0;transition:opacity .3s ease}
+  #hint.show{opacity:1}
+
+  /* ---------- Overview grid ---------- */
+  body.grid{overflow:auto}
+  body.grid #stage{position:static;display:block;padding:22px}
+  body.grid #deck{width:auto;height:auto;transform:none;display:grid;
+                  grid-template-columns:repeat(4,1fr);gap:16px}
+  body.grid .slide{position:relative;inset:auto;display:flex;zoom:var(--gz);cursor:pointer;
+                   border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow)}
+  body.grid .slide:hover{border-color:var(--green)}
+  body.grid #hint{display:none}
+
+  /* ---------- Print → PDF (Chrome: landscape, no margins) ---------- */
+  @page{size:1280px 720px;margin:0}
+  @media print{
+    body{overflow:visible;background:#fff}
+    #stage{position:static;display:block}
+    #deck{width:1280px;height:auto;transform:none;display:block}
+    .slide{position:relative;inset:auto;display:flex!important;zoom:1;width:1280px;height:720px;
+           break-after:page;page-break-after:always;border:0;box-shadow:none}
+    #hud,#hint{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div id="stage">
+<div id="deck">
+
+  <!-- ══════════ 1 · COVER ══════════ -->
+  <section class="slide cover on">
+    <div class="progress"></div>
+    <span class="logo big"><span class="no">no</span><span class="buc">buc</span><svg class="sprout" viewBox="0 0 24 24" fill="var(--green)"><path d="M12 22c0-6 3-10 9-11-1 6-4 9-9 11z"/><path d="M12 22c0-5-2-8-7-9 1 5 3 7 7 9z" opacity=".85"/></svg></span>
+    <p class="kicker" style="margin-top:30px">For Philippine food &amp; beverage</p>
+    <h1>One system from<br>the counter to the BIR.</h1>
+    <div class="rule"></div>
+    <p class="lede">Nobuc runs the till, the kitchen, the stockroom, the books, the tax returns and the payroll — on one database, in one login, built for Philippine rules.</p>
+    <div class="meta">
+      <span>Prepared for <b id="clientName">your team</b></span>
+      <span class="dot"></span>
+      <span id="deckDate">August 2026</span>
+      <span class="dot"></span>
+      <span>Confidential</span>
+    </div>
+  </section>
+
+  <!-- ══════════ 2 · HOW F&B IS RUN TODAY ══════════ -->
+  <section class="slide">
+    <div class="progress"></div>
+    <p class="kicker">The starting point</p>
+    <h2>Most F&amp;B businesses run on four systems that don't talk.</h2>
+    <div class="rule"></div>
+    <div class="body">
+      <div class="sys">
+        <div class="box"><div class="ttl">POS at the store</div><div class="sub">Sales, discounts, shifts. Exports a Z-reading and nothing else.</div></div>
+        <div class="box"><div class="ttl">Spreadsheets</div><div class="sub">Recipes, stock counts, commissary issues, wastage.</div></div>
+        <div class="box"><div class="ttl">The accountant's books</div><div class="sub">Re-encoded weeks later from receipts and summaries.</div></div>
+        <div class="box"><div class="ttl">A payroll app</div><div class="sub">Separate again — biometrics in, payslips out, journal by hand.</div></div>
+      </div>
+      <div class="seams">
+        <div class="seam">manual re-encoding</div>
+        <div class="seam">manual re-encoding</div>
+        <div class="seam">manual re-encoding</div>
+      </div>
+      <div class="cols c3" style="margin-top:26px">
+        <div class="card"><h3>The numbers arrive late</h3><p>Last month's real margin lands 5 to 20 days after the month you can still do something about.</p></div>
+        <div class="card"><h3>Nothing ties out</h3><p>Sales per POS, sales per books and sales per VAT return are three different figures, reconciled by hand.</p></div>
+        <div class="card"><h3>BIR season is a rebuild</h3><p>Books of accounts get reconstructed from scratch instead of printed from the system that recorded them.</p></div>
+      </div>
+    </div>
+    <div class="foot"><span class="logo sm"><span class="no">no</span><span class="buc">buc</span></span><span class="sep"></span><span>Nobuc for F&amp;B</span><span class="pgnum"></span></div>
+  </section>
+
+  <!-- ══════════ 3 · WHERE THE MARGIN LEAKS ══════════ -->
+  <section class="slide">
+    <div class="progress"></div>
+    <p class="kicker">Why it matters</p>
+    <h2>Five places the margin leaks — all of them invisible without one system.</h2>
+    <div class="rule"></div>
+    <div class="body">
+      <div class="cols c3">
+        <div class="card">
+          <div class="num"><em>₱90,000</em> / month</div>
+          <h3 style="margin-top:6px">Food cost drift</h3>
+          <p>Menu prices are set once a year; ingredient costs move weekly. Two points of drift on ₱4.5M monthly sales is ₱90,000 — and nobody sees it until the P&amp;L closes.</p>
+        </div>
+        <div class="card">
+          <div class="num"><em>₱45,000</em> / month</div>
+          <h3 style="margin-top:6px">Wastage off the books</h3>
+          <p>Spoilage and staff meals written on a notebook never reach the ledger. One percent of sales unlogged quietly becomes "shrinkage" at year-end count.</p>
+        </div>
+        <div class="card">
+          <div class="num">Untracked</div>
+          <h3 style="margin-top:6px">Commissary yield</h3>
+          <p>The central kitchen issues 100 kg of raw and books 100 kg of finished. Real yield, trim loss and rework never get journalised, so branch food cost absorbs the gap.</p>
+        </div>
+      </div>
+      <div class="cols c2" style="margin-top:18px">
+        <div class="card">
+          <h3>Payroll and service charge</h3>
+          <p>Night differential, holiday premiums and RA 11360 service-charge distribution computed in a spreadsheet is exactly where a DOLE finding starts — and where staff trust ends.</p>
+        </div>
+        <div class="card">
+          <h3>Tax exposure</h3>
+          <p>When POS sales, book sales and the VAT return disagree, reconstructing the tie-out during an audit costs more in time and professional fees than the assessment itself.</p>
+        </div>
+      </div>
+      <p class="note">Figures are illustrative, modelled on a three-branch operation at ₱4.5M monthly sales. We rebuild this slide with your actual numbers before any implementation is quoted.</p>
+    </div>
+    <div class="foot"><span class="logo sm"><span class="no">no</span><span class="buc">buc</span></span><span class="sep"></span><span>Nobuc for F&amp;B</span><span class="pgnum"></span></div>
+  </section>
+
+  <!-- ══════════ 4 · ONE SYSTEM ══════════ -->
+  <section class="slide">
+    <div class="progress"></div>
+    <p class="kicker">What Nobuc is</p>
+    <h2>One chain of records, from the ring at the till to the return you file.</h2>
+    <div class="rule"></div>
+    <div class="body">
+      <div class="pipe">
+        <div class="step"><div class="n">01</div><div class="t">Counter</div><div class="d">POS: orders, discounts, senior &amp; PWD, shift Z-reading</div></div>
+        <div class="step"><div class="n">02</div><div class="t">Kitchen</div><div class="d">Recipes, production runs, yield and wastage</div></div>
+        <div class="step"><div class="n">03</div><div class="t">Stockroom</div><div class="d">Receiving, transfers, counts, moving-average cost</div></div>
+        <div class="step"><div class="n">04</div><div class="t">Books</div><div class="d">AP, AR, GL — posted as it happens, double entry</div></div>
+        <div class="step"><div class="n">05</div><div class="t">BIR</div><div class="d">Books of accounts, VAT, withholding, SLSP</div></div>
+        <div class="step"><div class="n">06</div><div class="t">Payroll</div><div class="d">Timekeeping to payslip to journal entry</div></div>
+      </div>
+      <div class="oneline">
+        <span><i class="k"></i> One database</span>
+        <span><i class="k"></i> One login</span>
+        <span><i class="k"></i> Posted in real time</span>
+        <span><i class="k"></i> Nothing re-encoded, ever</span>
+      </div>
+      <div class="cols c3" style="margin-top:22px">
+        <div class="card plain"><h3>Your cashier's work is your accounting</h3><p>A sale is a journal entry, an inventory movement and a VAT line at the same moment — not three tasks for three people.</p></div>
+        <div class="card plain"><h3>Your accountant stops rebuilding</h3><p>They review and file. The books are already there, complete, in the BIR's format.</p></div>
+        <div class="card plain"><h3>You stop waiting for the month to close</h3><p>Food cost, labour cost and prime cost are current as of this morning's service.</p></div>
+      </div>
+    </div>
+    <div class="foot"><span class="logo sm"><span class="no">no</span><span class="buc">buc</span></span><span class="sep"></span><span>Nobuc for F&amp;B</span><span class="pgnum"></span></div>
+  </section>
+
+  <!-- ══════════ 5 · RECIPES & FOOD COST ══════════ -->
+  <section class="slide">
+    <div class="progress"></div>
+    <p class="kicker">Module · Recipes &amp; food cost</p>
+    <h2>Know what every plate costs — today, not next quarter.</h2>
+    <div class="rule"></div>
+    <div class="body cols c2u">
+      <ul class="pts">
+        <li><b>A recipe for every menu item</b>, down to sub-recipes — sauces, doughs, pre-mixes, portioned proteins.</li>
+        <li><b>Every ring at the till relieves ingredients</b> at moving-average cost. That is your theoretical usage, calculated automatically.</li>
+        <li><b>Physical count posts actual usage.</b> The difference is variance — per branch, per item, per day, with a reason code.</li>
+        <li><b>Menu engineering, live:</b> contribution margin per item, ranked, so you know what to push and what to re-price.</li>
+        <li><b>Simulate a price move:</b> "if pork belly rises ₱30/kg, here is the new margin on every item that uses it."</li>
+      </ul>
+      <div class="stack">
+        <div class="card">
+          <h3 style="margin-bottom:10px">Food cost — Branch 02, week 33</h3>
+          <table class="mini">
+            <tbody>
+              <tr><td>Theoretical (from recipes)</td><td class="num-cell">41.2%</td></tr>
+              <tr><td>Actual (from count)</td><td class="num-cell">43.8%</td></tr>
+              <tr><td style="color:var(--neg)">Variance</td><td class="num-cell" style="color:var(--neg);font-weight:700">+2.6 pts</td></tr>
+              <tr><td>Peso impact, week</td><td class="num-cell">₱27,300</td></tr>
+            </tbody>
+          </table>
+          <p class="note" style="margin-top:10px">Top contributors: pork belly ₱11,400 · cooking oil ₱6,100 · rice ₱4,300.</p>
+        </div>
+        <div class="card plain">
+          <h3>The point</h3>
+          <p>A 2.6-point variance is a conversation with a branch manager this week — or a write-off you discover in March.</p>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span class="logo sm"><span class="no">no</span><span class="buc">buc</span></span><span class="sep"></span><span>Nobuc for F&amp;B</span><span class="pgnum"></span></div>
+  </section>
+
+  <!-- ══════════ 6 · COMMISSARY & PRODUCTION ══════════ -->
+  <section class="slide">
+    <div class="progress"></div>
+    <p class="kicker">Module · Commissary &amp; production</p>
+    <h2>The central kitchen becomes a costed, auditable step — not a black box.</h2>
+    <div class="rule"></div>
+    <div class="body cols c2">
+      <ul class="pts">
+        <li><b>Production order from a recipe:</b> issue the raw materials, receive the finished goods, book the yield variance in the same document.</li>
+        <li><b>Wastage, trim and rework captured where they happen</b>, with a reason code, at cost.</li>
+        <li><b>Transfer to branch at cost</b> — one document posts both sides. No branch re-encodes a delivery receipt.</li>
+        <li><b>Every run leaves a journal entry.</b> Your accountant sees work-in-process and finished goods, not an unexplained inventory jump.</li>
+        <li><b>Standard vs actual per run</b>, so a bad batch is visible the day it happens.</li>
+      </ul>
+      <div class="stack">
+        <div class="card">
+          <h3 style="margin-bottom:10px">Production run PR-2026-0841 · Ciabatta dough</h3>
+          <table class="mini">
+            <thead><tr><th>Line</th><th class="num-cell">Qty</th><th class="num-cell">Cost</th></tr></thead>
+            <tbody>
+              <tr><td>Flour, bread</td><td class="num-cell">60.0 kg</td><td class="num-cell">₱3,180</td></tr>
+              <tr><td>Yeast, salt, oil</td><td class="num-cell">4.2 kg</td><td class="num-cell">₱1,040</td></tr>
+              <tr><td>Labour applied</td><td class="num-cell">6.0 hr</td><td class="num-cell">₱1,260</td></tr>
+              <tr><td><b>Finished — expected</b></td><td class="num-cell">96.0 kg</td><td class="num-cell">₱5,480</td></tr>
+              <tr><td style="color:var(--warn)">Finished — actual</td><td class="num-cell" style="color:var(--warn)">93.1 kg</td><td class="num-cell" style="color:var(--warn)">variance ₱166</td></tr>
+            </tbody>
+          </table>
+          <p class="note" style="margin-top:10px">Variance posts to a yield account automatically — visible, explainable, and never hidden inside food cost.</p>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span class="logo sm"><span class="no">no</span><span class="buc">buc</span></span><span class="sep"></span><span>Nobuc for F&amp;B</span><span class="pgnum"></span></div>
+  </section>
+
+  <!-- ══════════ 7 · BRANCHES & FRANCHISE ══════════ -->
+  <section class="slide">
+    <div class="progress"></div>
+    <p class="kicker">Module · Multi-branch &amp; franchise</p>
+    <h2>Ten branches, one ledger — and every branch still has its own P&amp;L.</h2>
+    <div class="rule"></div>
+    <div class="body cols c2u">
+      <ul class="pts">
+        <li><b>Consolidated and per-branch P&amp;L from the same ledger</b> — no month-end merging of workbooks.</li>
+        <li><b>Inter-branch transfers and inter-company billing</b> that eliminate on consolidation instead of double-counting revenue.</li>
+        <li><b>Franchise royalty and marketing fund</b> computed off actual net sales and invoiced on schedule, with the statement the franchisee can check.</li>
+        <li><b>Daily sales versus bank deposit</b> reconciled the next morning — the cash gap surfaces in a day, not a quarter.</li>
+        <li><b>Access by role:</b> a branch manager sees their branch; the commissary sees production; the owner sees everything.</li>
+      </ul>
+      <div class="stack">
+        <div class="card">
+          <h3 style="margin-bottom:10px">Yesterday · all branches</h3>
+          <table class="mini">
+            <thead><tr><th>Branch</th><th class="num-cell">Net sales</th><th class="num-cell">Food %</th></tr></thead>
+            <tbody>
+              <tr><td>Ayala</td><td class="num-cell">₱184,200</td><td class="num-cell">39.4%</td></tr>
+              <tr><td>IT Park</td><td class="num-cell">₱152,900</td><td class="num-cell">41.0%</td></tr>
+              <tr><td>Banilad</td><td class="num-cell">₱98,650</td><td class="num-cell" style="color:var(--neg);font-weight:700">46.8%</td></tr>
+              <tr><td><b>Total</b></td><td class="num-cell"><b>₱435,750</b></td><td class="num-cell"><b>41.6%</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card plain"><h3>Deposit check</h3><p>₱435,750 rung · ₱428,900 deposited · <b style="color:var(--neg)">₱6,850 unaccounted</b> — flagged on the reconciliation screen this morning.</p></div>
+      </div>
+    </div>
+    <div class="foot"><span class="logo sm"><span class="no">no</span><span class="buc">buc</span></span><span class="sep"></span><span>Nobuc for F&amp;B</span><span class="pgnum"></span></div>
+  </section>
+
+  <!-- ══════════ 8 · BIR BLOCK ══════════ -->
+  <section class="slide">
+    <div class="progress"></div>
+    <p class="kicker">The differentiator</p>
+    <h2>Built for the BIR, not localised for it afterwards.</h2>
+    <div class="rule"></div>
+    <div class="body">
+      <table>
+        <thead>
+          <tr><th>Requirement</th><th class="c">Nobuc</th><th class="c">Global cloud accounting</th><th class="c">Standalone POS</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>VAT engine — VATable, exempt, zero-rated; senior &amp; PWD the BIR way</td><td class="c yes">Native</td><td class="c part">Partial</td><td class="c part">Sales only</td></tr>
+          <tr><td>BIR Sales Invoice / Official Receipt series control</td><td class="c yes">Native</td><td class="c no">No</td><td class="c part">Sales only</td></tr>
+          <tr><td>Books of Accounts — Sales, Purchase, Cash Receipts, Cash Disbursements, General Journal, General Ledger</td><td class="c yes">Native</td><td class="c no">No</td><td class="c no">No</td></tr>
+          <tr><td>Summary List of Sales &amp; Purchases (SLSP)</td><td class="c yes">Native</td><td class="c no">No</td><td class="c no">No</td></tr>
+          <tr><td>2550Q quarterly VAT worksheet</td><td class="c yes">Native</td><td class="c no">No</td><td class="c no">No</td></tr>
+          <tr><td>1601-C, 1604-C and alphalist from your own payroll</td><td class="c yes">Native</td><td class="c part">Third-party app</td><td class="c no">No</td></tr>
+          <tr><td>2307 creditable withholding certificates</td><td class="c yes">Native</td><td class="c part">Manual</td><td class="c no">No</td></tr>
+          <tr><td>Documentation pack for computerised-books accreditation</td><td class="c yes">Included</td><td class="c part">Via local partner</td><td class="c no">n/a</td></tr>
+        </tbody>
+      </table>
+      <p class="note">We benchmarked a leading global cloud accounting suite before building this: in the Philippines it produces no registrable books of accounts, no native returns, and needs a third-party app for payroll. That gap is the reason Nobuc exists. Filing remains your accountant's professional judgement — Nobuc produces the books and worksheets that back it.</p>
+    </div>
+    <div class="foot"><span class="logo sm"><span class="no">no</span><span class="buc">buc</span></span><span class="sep"></span><span>Nobuc for F&amp;B</span><span class="pgnum"></span></div>
+  </section>
+
+  <!-- ══════════ 9 · PAYROLL ══════════ -->
+  <section class="slide">
+    <div class="progress"></div>
+    <p class="kicker">Module · Philippine payroll</p>
+    <h2>Restaurant payroll is the hard kind. It's built in, not bolted on.</h2>
+    <div class="rule"></div>
+    <div class="body cols c2u">
+      <ul class="pts">
+        <li><b>SSS, PhilHealth, Pag-IBIG and withholding tax</b> on the current tables, per employee, with the remittance schedules.</li>
+        <li><b>Shift reality:</b> night differential, rest days, regular and special holidays, overtime tiers, late and undertime — read from biometrics, not retyped.</li>
+        <li><b>Service charge under RA 11360:</b> pooled, distributed 100% to covered employees at least twice a month, with a per-employee sheet you can show anyone who asks.</li>
+        <li><b>13th month, final pay, loans and cash advances</b> tracked against the employee, not a side spreadsheet.</li>
+        <li><b>Approved payroll posts to the ledger</b> as a journal entry — labour cost lands in the same P&amp;L as food cost, on the same day.</li>
+      </ul>
+      <div class="stack">
+        <div class="card">
+          <h3 style="margin-bottom:10px">Prime cost — this week</h3>
+          <table class="mini">
+            <tbody>
+              <tr><td>Food cost</td><td class="num-cell">41.6%</td></tr>
+              <tr><td>Labour cost</td><td class="num-cell">22.1%</td></tr>
+              <tr><td><b>Prime cost</b></td><td class="num-cell"><b>63.7%</b></td></tr>
+              <tr><td>Service charge pool</td><td class="num-cell">₱38,420</td></tr>
+            </tbody>
+          </table>
+          <p class="note" style="margin-top:10px">Prime cost is the number that decides whether an F&amp;B business is healthy. Most owners can only compute it after the books close. Here it is a screen.</p>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span class="logo sm"><span class="no">no</span><span class="buc">buc</span></span><span class="sep"></span><span>Nobuc for F&amp;B</span><span class="pgnum"></span></div>
+  </section>
+
+  <!-- ══════════ 10 · OWNER'S VIEW ══════════ -->
+  <section class="slide">
+    <div class="progress"></div>
+    <p class="kicker">Module · Owner's view</p>
+    <h2>Open your phone, ask a question, get the real number.</h2>
+    <div class="rule"></div>
+    <div class="body cols c2">
+      <div class="stack">
+        <div class="card plain">
+          <h3>One dashboard</h3>
+          <p>Sales, food cost %, labour %, prime cost, cash position, payables due this week, and the branches that moved — all from the ledger, all current.</p>
+        </div>
+        <div class="card plain">
+          <h3>Ask in plain English</h3>
+          <p>The built-in assistant reads your live data and answers with your numbers. No report builder, no exporting to Excel to find out.</p>
+        </div>
+        <div class="card plain">
+          <h3>One version of the truth</h3>
+          <p>What you see is what your accountant sees and what the BIR return is built from. There is no second set of numbers to reconcile.</p>
+        </div>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:12px">Asked this morning</h3>
+        <ul class="pts tight">
+          <li>"Which branch had the worst food cost last week, and what drove it?"</li>
+          <li>"How much did we spend on pork last month across all branches?"</li>
+          <li>"What's my payable to Nestlé Philippines and when is it due?"</li>
+          <li>"Show me service charge per employee for the last cut-off."</li>
+          <li>"Is Banilad's cash short again this week?"</li>
+        </ul>
+        <p class="note">Answers come from the same tables the books are made of — so an answer can always be traced to the documents behind it.</p>
+      </div>
+    </div>
+    <div class="foot"><span class="logo sm"><span class="no">no</span><span class="buc">buc</span></span><span class="sep"></span><span>Nobuc for F&amp;B</span><span class="pgnum"></span></div>
+  </section>
+
+  <!-- ══════════ 11 · SEE IT ══════════ -->
+  <section class="slide">
+    <div class="progress"></div>
+    <p class="kicker">See it working</p>
+    <h2>These are the actual screens. Click into any of them now.</h2>
+    <div class="rule"></div>
+    <div class="body">
+      <div class="cols c3">
+        <a class="demo" href="index.html#pos" target="_blank" rel="noopener">
+          <div class="t">Sales &amp; POS <span class="arrow">→</span></div>
+          <p>Order screen, discounts, tender, and the BIR sales invoice it produces.</p>
+        </a>
+        <a class="demo" href="index.html#production" target="_blank" rel="noopener">
+          <div class="t">Production <span class="arrow">→</span></div>
+          <p>A commissary run from recipe to finished goods, with the yield variance.</p>
+        </a>
+        <a class="demo" href="index.html#bir" target="_blank" rel="noopener">
+          <div class="t">BIR &amp; Tax <span class="arrow">→</span></div>
+          <p>Books of accounts, VAT worksheet, withholding and the filing calendar.</p>
+        </a>
+      </div>
+      <div class="cols c3" style="margin-top:16px">
+        <a class="demo" href="index.html#inventory" target="_blank" rel="noopener">
+          <div class="t">Inventory <span class="arrow">→</span></div>
+          <p>Receiving, transfers, counts and moving-average cost per branch.</p>
+        </a>
+        <a class="demo" href="index.html#payroll" target="_blank" rel="noopener">
+          <div class="t">Payroll <span class="arrow">→</span></div>
+          <p>Timekeeping, statutory deductions, service charge and the payroll journal.</p>
+        </a>
+        <a class="demo" href="index.html#dashboard" target="_blank" rel="noopener">
+          <div class="t">Dashboard <span class="arrow">→</span></div>
+          <p>The owner's morning screen — sales, cost, cash, and what needs attention.</p>
+        </a>
+      </div>
+      <p class="note">Walk it yourself after this meeting: <span class="url">nobuc-mockup-gspzy.ondigitalocean.app</span></p>
+    </div>
+    <div class="foot"><span class="logo sm"><span class="no">no</span><span class="buc">buc</span></span><span class="sep"></span><span>Nobuc for F&amp;B</span><span class="pgnum"></span></div>
+  </section>
+
+  <!-- ══════════ 12 · ROLLOUT ══════════ -->
+  <section class="slide">
+    <div class="progress"></div>
+    <p class="kicker">How it goes live</p>
+    <h2>Ten weeks, one branch at a time, nothing switched off before it's proven.</h2>
+    <div class="rule"></div>
+    <div class="body">
+      <div class="phases">
+        <div class="phase">
+          <div class="wk">Weeks 1–2</div>
+          <h4>Discovery &amp; data</h4>
+          <p>Chart of accounts, menu, recipes, suppliers, employees and opening balances. We do the loading; you review it.</p>
+        </div>
+        <div class="phase">
+          <div class="wk">Weeks 3–5</div>
+          <h4>Counter &amp; stockroom</h4>
+          <p>POS, inventory and recipes live in one pilot branch. Staff trained on the floor, during real service.</p>
+        </div>
+        <div class="phase">
+          <div class="wk">Weeks 6–8</div>
+          <h4>Books &amp; BIR</h4>
+          <p>AP, AR and the general ledger. Books of accounts and the first VAT return produced in parallel with your accountant's own figures.</p>
+        </div>
+        <div class="phase">
+          <div class="wk">Weeks 9–10</div>
+          <h4>Payroll &amp; rollout</h4>
+          <p>One payroll run in parallel with your current process, then remaining branches, training and handover.</p>
+        </div>
+      </div>
+      <div class="bar"><div></div><div></div><div></div><div></div></div>
+      <div class="cols c2" style="margin-top:24px">
+        <div class="card"><h3>What we need from you</h3><p>One decision-maker on your side, three months of sales and purchase history, your current chart of accounts, and one branch willing to be first.</p></div>
+        <div class="card"><h3>What you keep during the switch</h3><p>Your existing process runs untouched until the parallel run matches. Nothing is cut over on a promise.</p></div>
+      </div>
+    </div>
+    <div class="foot"><span class="logo sm"><span class="no">no</span><span class="buc">buc</span></span><span class="sep"></span><span>Nobuc for F&amp;B</span><span class="pgnum"></span></div>
+  </section>
+
+  <!-- ══════════ 13 · WHY NOBUC ══════════ -->
+  <section class="slide">
+    <div class="progress"></div>
+    <p class="kicker">Why us</p>
+    <h2>Built here, for here — and we own every line of it.</h2>
+    <div class="rule"></div>
+    <div class="body cols c2">
+      <div class="stack">
+        <div class="card"><h3>Philippine rules are the design</h3><p>VAT, senior and PWD discounts, books of accounts, statutory deductions and RA 11360 aren't a localisation pack sitting on top of a foreign product. They are the schema.</p></div>
+        <div class="card"><h3>One vendor, one system</h3><p>POS, inventory, production, accounting and payroll come from us. No integration bill, no middleware to maintain, nobody to blame across a seam.</p></div>
+      </div>
+      <div class="stack">
+        <div class="card"><h3>We built the engine</h3><p>The double-entry core, the costing and the payroll engine are ours. A change your operation needs is a build we schedule — not a feature request into a global backlog that never gets read.</p></div>
+        <div class="card"><h3>Peso pricing, local support</h3><p>Quoted in pesos, supported in your working hours, by people who can be in your commissary when it matters.</p></div>
+      </div>
+    </div>
+    <div class="foot"><span class="logo sm"><span class="no">no</span><span class="buc">buc</span></span><span class="sep"></span><span>Nobuc for F&amp;B</span><span class="pgnum"></span></div>
+  </section>
+
+  <!-- ══════════ 14 · NEXT STEPS ══════════ -->
+  <section class="slide cover">
+    <div class="progress"></div>
+    <p class="kicker">Next steps</p>
+    <h2 style="font-size:46px">Three steps, and you'll be looking at your own numbers.</h2>
+    <div class="rule"></div>
+    <div class="body cols c2u" style="align-items:start">
+      <div class="steps">
+        <div class="stp"><div class="i">1</div><div><div class="t">A 45-minute walkthrough</div><p>With your operations lead and your accountant in the same room, on the screens you saw today.</p></div></div>
+        <div class="stp"><div class="i">2</div><div><div class="t">One real month, rebuilt</div><p>Give us one branch's actual month. We load it and show you your own food cost, prime cost and books — not a demo company's.</p></div></div>
+        <div class="stp"><div class="i">3</div><div><div class="t">Scope, price and start date</div><p>A fixed scope for the ten-week rollout, priced in pesos, with the pilot branch named.</p></div></div>
+      </div>
+      <div class="card" style="background:var(--surface)">
+        <span class="logo"><span class="no">no</span><span class="buc">buc</span><svg class="sprout" viewBox="0 0 24 24" fill="var(--green)"><path d="M12 22c0-6 3-10 9-11-1 6-4 9-9 11z"/><path d="M12 22c0-5-2-8-7-9 1 5 3 7 7 9z" opacity=".85"/></svg></span>
+        <p class="note" style="margin-top:14px;color:var(--muted);font-size:14px;line-height:1.6">
+          <b style="color:var(--ink)" id="contactName">Alfred Reloj</b><br>
+          <span id="contactRole">Nobuc — Philippine accounting ERP</span><br>
+          <span id="contactMail">••••••@••••••</span><br>
+          <span id="contactPhone">+63 ••• ••• ••••</span>
+        </p>
+        <p class="note">Demo: nobuc-mockup-gspzy.ondigitalocean.app</p>
+      </div>
+    </div>
+    <div class="foot"><span class="logo sm"><span class="no">no</span><span class="buc">buc</span></span><span class="sep"></span><span>Nobuc for F&amp;B</span><span class="pgnum"></span></div>
+  </section>
+
+</div>
+</div>
+
+<div id="hint">← → to move · O for overview · P to print</div>
+<div id="hud">
+  <button id="btnPrev" title="Previous (←)" aria-label="Previous slide">‹</button>
+  <button id="btnNext" title="Next (→)" aria-label="Next slide">›</button>
+  <button id="btnGrid" title="Overview (O)" aria-label="Slide overview">▦</button>
+  <button id="btnTheme" title="Light / dark (T)" aria-label="Toggle theme">◐</button>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  const slides=[...document.querySelectorAll('.slide')];
+  const deck=document.getElementById('deck');
+  let i=0;
+
+  /* ---------- fit the fixed 1280×720 stage to whatever screen it is presented on ---------- */
+  function fit(){
+    const pad=document.body.classList.contains('grid')?0:24;
+    const s=Math.min((innerWidth-pad)/1280,(innerHeight-pad)/720);
+    document.documentElement.style.setProperty('--s',s);
+    /* overview thumbnails: zoom so four slides fit a row inside the padded viewport */
+    const colw=(innerWidth-44-3*16)/4;
+    document.documentElement.style.setProperty('--gz',(colw/1280).toFixed(4));
+  }
+
+  /* ---------- slide chrome: page numbers + progress bar ---------- */
+  slides.forEach((s,n)=>{
+    const p=s.querySelector('.pgnum'); if(p)p.textContent=(n+1)+' / '+slides.length;
+    s.addEventListener('click',()=>{ if(document.body.classList.contains('grid')){ go(n); toggleGrid(false); } });
+  });
+
+  function go(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('on',k===i));
+    const bar=slides[i].querySelector('.progress');
+    if(bar)bar.style.width=((i+1)/slides.length*100)+'%';
+    if(location.hash!=='#'+(i+1))history.replaceState(null,'','#'+(i+1));
+  }
+  const next=()=>go(i+1), prev=()=>go(i-1);
+
+  function toggleGrid(on){
+    const g=on===undefined?!document.body.classList.contains('grid'):on;
+    document.body.classList.toggle('grid',g);
+    slides.forEach(s=>s.classList.toggle('on',g?true:false));
+    if(!g)go(i); else fit();
+    if(g)slides[i].scrollIntoView({block:'center'});
+  }
+
+  /* ---------- theme: remembers the presenter's choice for the session ---------- */
+  function toggleTheme(){
+    const dark=document.documentElement.getAttribute('data-theme')==='dark';
+    document.documentElement.setAttribute('data-theme',dark?'light':'dark');
+    try{sessionStorage.setItem('nobuc-deck-theme',dark?'light':'dark');}catch(e){}
+  }
+
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();next();}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();prev();}
+    else if(e.key==='Home'){e.preventDefault();go(0);}
+    else if(e.key==='End'){e.preventDefault();go(slides.length-1);}
+    else if(e.key==='o'||e.key==='O'){e.preventDefault();toggleGrid();}
+    else if(e.key==='Escape'){toggleGrid(false);}
+    else if(e.key==='p'||e.key==='P'){e.preventDefault();toggleGrid(false);print();}
+    else if(e.key==='t'||e.key==='T'){toggleTheme();}
+  });
+
+  /* a pasted link like deck-fnb.html#8 jumps to that slide, even without a reload */
+  addEventListener('hashchange',()=>{
+    const n=parseInt((location.hash||'').slice(1),10);
+    if(!isNaN(n)&&n-1!==i)go(n-1);
+  });
+
+  document.getElementById('btnNext').onclick=next;
+  document.getElementById('btnPrev').onclick=prev;
+  document.getElementById('btnGrid').onclick=()=>toggleGrid();
+  document.getElementById('btnTheme').onclick=toggleTheme;
+  addEventListener('resize',fit);
+
+  /* show the controls on pointer activity, then get out of the way again */
+  const hud=document.getElementById('hud'), hint=document.getElementById('hint');
+  let idle;
+  function wake(){
+    hud.classList.add('show'); hint.classList.add('show');
+    clearTimeout(idle);
+    idle=setTimeout(()=>{hud.classList.remove('show');hint.classList.remove('show');},2200);
+  }
+  addEventListener('mousemove',wake);
+  addEventListener('mousedown',wake);
+  wake();
+  /* print the whole deck, not just the visible slide */
+  addEventListener('beforeprint',()=>toggleGrid(false));
+
+  /* ---------- per-client cover text, set from the URL so one file serves every pitch ---------- */
+  const q=new URLSearchParams(location.search);
+  const setText=(id,v)=>{const el=document.getElementById(id); if(el&&v)el.textContent=v;};
+  setText('clientName',q.get('client'));
+  setText('deckDate',q.get('date'));
+  setText('contactName',q.get('name'));
+  setText('contactRole',q.get('role'));
+  setText('contactMail',q.get('email'));
+  setText('contactPhone',q.get('phone'));
+
+  try{
+    const t=sessionStorage.getItem('nobuc-deck-theme');
+    if(t)document.documentElement.setAttribute('data-theme',t);
+  }catch(e){}
+
+  fit();
+  const start=parseInt((location.hash||'').slice(1),10);
+  go(isNaN(start)?0:start-1);
+})();
+</script>
+</body>
+</html>

@@ -880,8 +880,16 @@
     document.querySelector('.home-link').style.display=onHub?'none':'inline';
     document.querySelector('.crumb-sep').style.display=onHub?'none':'inline';
     if(id==='sales')closeReceipt();
+    /* keep the URL in sync so the pitch deck can deep-link straight to a screen */
+    if(location.hash.slice(1)!==id)history.replaceState(null,'','#'+id);
     window.scrollTo({top:0,behavior:'smooth'});
   }
+  /* open on the screen named in the URL hash, e.g. index.html#production */
+  function openFromHash(){
+    const id=location.hash.slice(1);
+    if(id&&titles[id]&&document.getElementById(id))show(id);
+  }
+  window.addEventListener('hashchange',openFromHash);
   function subtab(page,sub){
     const sec=document.getElementById(page);
     sec.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.getAttribute('onclick').includes("'"+sub+"'")));
@@ -930,6 +938,9 @@
   /* ---------- POS interactions ---------- */
   function posCat(el){el.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');}
   function posPay(el){el.parentElement.querySelectorAll('.pay').forEach(p=>p.classList.remove('on'));el.classList.add('on');}
+
+  /* run last: everything above is declared, so a deep-link hash can safely open its screen */
+  openFromHash();
 </script>
 </body>
 </html>
